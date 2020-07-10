@@ -64,7 +64,7 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='06162020_yhdL_nutrientShift_colony1';%Name of the image stack, used to save file.
+basename='06162020_yhdL_nutrientShift_colony2';%Name of the image stack, used to save file.
 dirname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_2_b'];%Directory that the image stack is saved in.
 savedir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
