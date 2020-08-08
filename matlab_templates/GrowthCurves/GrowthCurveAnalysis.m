@@ -14,7 +14,7 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %INPUT
-filename=('07312020_growthCurve');
+filename=('08062020_growthCurve');
 dirname=('/Users/zarina/Downloads/NYU/Lab_2020_Summer/growthCurves/');
 filepath=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/growthCurves/' filename '.xlsx'];
 
@@ -29,19 +29,32 @@ t=xlsread(filepath, timeRange); %time data
 T=length(t);
 tscale=T/600; %why divide by 600?
 nwells=size(wells);
-condlab={'WT', 'dSigM'};
+condlab={'WTsgRNA', 'yhdL', 'JP4', 'JP5', 'JP6', 'JP27', 'JP28', 'JP29'};
 
 %xlRange='B50:EL145';
 %nwells=96
 %T=141
-array1=[1:5];
-cond1=[1:5]; 
+cond1a=[1:10:30]; 
+cond1b=[31:10:60]; 
+cond2a=[2:10:30];
+cond2b=[32:10:60];
+cond3a=[3:10:30];
+cond3b=[33:10:60];
+cond4a=[4:10:30];
+cond4b=[34:10:60];
+cond5a=[5:10:30];
+cond5b=[35:10:60];
+cond6a=[6:10:30];
+cond6b=[36:10:60];
+cond7a=[7:10:30];
+cond7b=[37:10:60];
+cond8a=[8:10:30];
+cond8b=[38:10:60];
 
-array2=[6:10];
-cond2=[6:10];
+blank1=[9:10:30;39:10:60]; %index for controls
+blank2=[10:10:30;40:10:60];
 
-blank=[41:50,51:60]; %index for controls
-
+%{
 for i=1:3
     array1New=array1 + (10*i) 
     array2New=array2 + (10*i)
@@ -49,6 +62,7 @@ for i=1:3
     cond2=[cond2, array2New] %calculate index for cond2
    
 end
+%}
 
 %condition1=od(cond1, :);
 %condition2=od(cond2, :);
@@ -62,8 +76,22 @@ end
 %     cond2Avg(i)=mean(condition2(:, i));   
 % end
 
-WellInd={cond1,blank;
-  cond2,blank};
+WellInd={cond1a,blank1;
+    cond1b,blank2;
+    cond2a,blank1;
+    cond2b,blank2;
+    cond3a,blank1;
+    cond3b,blank2;
+    cond4a,blank1;
+    cond4b,blank2;
+    cond5a,blank1;
+    cond5b,blank2;
+    cond6a,blank1;
+    cond6b,blank2;
+    cond7a,blank1;
+    cond7b,blank2;
+    cond8a,blank1;
+    cond8b,blank2};
 
 %Initialize arrays
 [Ncond ~]=size(WellInd); 
@@ -83,6 +111,9 @@ for i=1:1:Ncond
     OD_st=std(OD_norm)
 end 
    
+OD_norm1=OD_norm(1:2:end, :);
+OD_norm2=OD_norm(2:2:end, :);
+
 %calculate growthrate  for i=1:Ncond
 
 time=([0:T-1]*600) %why multiply by 600?
@@ -129,30 +160,60 @@ legend(condlab)
 fig2pretty
 %}
 
-a=find(eODsmooth(1, :) == max(eODsmooth(1,:)));
-b=find(eODsmooth(2, :) == max(eODsmooth(2,:)));
+eODsmooth1=eODsmooth(1:2:16,:);
+eODsmooth2=eODsmooth(2:2:16,:);
 
-ta = tim(a); 
-tb = tim(b);
+%a=find(eODsmooth(1, :) == max(eODsmooth(1,:)));
+%b=find(eODsmooth(2, :) == max(eODsmooth(2,:)));
+
+%ta = tim(a); 
+%tb = tim(b);
+[nrow, ncol] = size(eODsmooth1);
+
+for i=1:nrow
+    a(i)=find(eODsmooth1(i, :) == max(eODsmooth1(i,:)));
+    b(i)=find(eODsmooth2(i, :) == max(eODsmooth2(i,:)));
+    ta(i) = tim(a(i)); 
+    tb(i) = tim(b(i));
+end
 
 figure
-plot(tim,eODsmooth*3600)
+plot(tim,eODsmooth1*3600)
 xlabel('Time (h)')
-ylabel('Growth Rate (h^{-1})')
-xline(ta, '--b')
-xline(tb, '--', 'Color', [0.8500 0.3250 0.0980])
+ylabel('Growth Rate in LB (h^{-1})')
+%xline(ta, '--b')
+%xline(tb, '--', 'Color', [0.8500 0.3250 0.0980])
 legend(condlab)
 fig2pretty
 cd(dirname)
-saveas(gcf, [filename '_gr'])
- 
-figure 
-plot(time2,OD_norm)
+saveas(gcf, [filename '_gr1'])
+
+figure
+plot(tim,eODsmooth2*3600)
 xlabel('Time (h)')
-ylabel('OD(AU)')
+ylabel('Growth Rate in LB + 1M sorbitol (h^{-1})')
+%xline(ta, '--b')
+%xline(tb, '--', 'Color', [0.8500 0.3250 0.0980])
 legend(condlab)
 fig2pretty
-saveas(gcf, [filename '_OD'])
+cd(dirname)
+saveas(gcf, [filename '_gr2'])
+
+figure 
+plot(time2,OD_norm1)
+xlabel('Time (h)')
+ylabel('OD(AU) in LB')
+legend(condlab)
+fig2pretty
+saveas(gcf, [filename '_OD1'])
+
+figure 
+plot(time2,OD_norm2)
+xlabel('Time (h)')
+ylabel('OD(AU) in LB + 1M sorbitol')
+legend(condlab)
+fig2pretty
+saveas(gcf, [filename '_OD2'])
 
 cd(dirname)
 save([filename '_GCA.mat'])
