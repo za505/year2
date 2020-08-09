@@ -64,14 +64,14 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='06162020_yhdL_nutrientShift_colony2';%Name of the image stack, used to save file.
-dirname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_2_b'];%Directory that the image stack is saved in.
-savedir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename];%Directory to save the output .mat file to.
+basename='08052020_hyposhock';%Name of the image stack, used to save file.
+dirname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08052020_hyposhock/' basename '_1_b'];%Directory that the image stack is saved in.
+savedir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08052020_hyposhock/' basename];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
 lscale=0.08;%%Microns per pixel.
 tscale=60;%Frame rate.
 thresh=0;%For default, enter zero.
-IntThresh=20000;%Threshold used to enhance contrast. Default:35000
+IntThresh=35000;%Threshold used to enhance contrast. Default:35000
 dr=1;%Radius of dilation before watershed 
 sm=2;%Parameter used in edge detection
 minL=2;%Minimum cell length
