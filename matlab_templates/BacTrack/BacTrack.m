@@ -64,14 +64,14 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='08052020_hyposhock';%Name of the image stack, used to save file.
-dirname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08052020_hyposhock/' basename '_1_b'];%Directory that the image stack is saved in.
-savedir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08052020_hyposhock/' basename];%Directory to save the output .mat file to.
+basename='08112020_WT_hypershock_colony4';%Name of the image stack, used to save file.
+dirname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08112020_hypershock/08112020_WT_hypershock/' basename '/' basename '_1_b'];%Directory that the image stack is saved in.
+savedir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08112020_hypershock/08112020_WT_hypershock/' basename '/' basename '_figureErase'];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
 lscale=0.08;%%Microns per pixel.
-tscale=60;%Frame rate.
+tscale=10;%Frame rate.
 thresh=0;%For default, enter zero.
-IntThresh=35000;%Threshold used to enhance contrast. Default:35000
+IntThresh=30000;%Threshold used to enhance contrast. Default:35000
 dr=1;%Radius of dilation before watershed 
 sm=2;%Parameter used in edge detection
 minL=2;%Minimum cell length
@@ -250,8 +250,8 @@ for t=1:T
     allcentroids=[allcentroids;centroids];
     tstamp=[tstamp;ones(nc(t),1)*t];
     cellnum=[cellnum;(1:nc(t))'];
-    
-if vis==1
+
+if vis==1 & t < 6
    figure
    imshow(im)
    hold on
@@ -481,6 +481,8 @@ ew(ew==0)=NaN;
 end
 
 %Plot data
+cd(savedir);
+
 figure(1), title('Cell Length vs. Time')
 clf
 hold on
@@ -494,6 +496,7 @@ end
 xlabel('Time (s)')
 ylabel('Length (\mum)')
 fig2pretty
+saveas(gcf,[basename,'_CWT.png'])
 
 figure(2), title('Cell Width vs. Time')
 hold on
@@ -504,6 +507,7 @@ plot(time,wav,'-r','LineWidth',2)
 xlabel('Time (s)')
 ylabel('Width (/mum)')
 fig2pretty
+saveas(gcf, [basename,'_wTraces.png'])
 
 % figure(4), title('Circumferential Strain vs. Time')
 % hold on
@@ -526,6 +530,7 @@ plot(tmid,vav,'-r')
 xlabel('Time (s)')
 ylabel('Elongation Rate (s^{-1})')
 fig2pretty
+saveas(gcf, [basename,'_eTraces.png'])
 
 figure(6), title('Elongation Rate vs. Time')
 hold on
@@ -534,7 +539,7 @@ plot(tmid,vav*3600,'-r')
 xlabel('Time (s)')
 ylabel('Elongation (hr^{-1})')
 fig2pretty
+saveas(gcf, [basename,'_ET.png'])
 
-cd(dirname);
-save([basename '_BT'])
+save([basename '_BTphase'])
 save([basename '_BTlab'],'labels','labels2','-v7.3')
