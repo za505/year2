@@ -52,7 +52,7 @@ close all
 
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-maindir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08062020_hyposhock/08062020_dSigM_hyposhock/'];
+maindir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08112020_hypershock/08112020_WT_hypershock/'];
 
 cd(maindir);
 subdir=dir('*colony*');
@@ -60,56 +60,85 @@ subdir=struct2cell(subdir);
 [~, numFile]=size(subdir);
 %condlab=[1, numFile];
 
-cmap=colormap(lines);
-cmap2=colormap(parula);
-cmap3=colormap(hsv);
+cmap=colormap(gray);
+%cmap2=colormap(parula);
+%cmap3=colormap(hsv);
 
 for i=1:numFile
     basename=char(subdir(1,i));
-    savedir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08062020_hyposhock/08062020_dSigM_hyposhock/' basename '/' basename '_figureErase'];
+    savedir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08112020_hypershock/08112020_WT_hypershock/' basename '/' basename '_figureErase'];
     cd(savedir);
     
     load([basename '_BTphase.mat'], 'vav', 'tmid')
     
-    vavMat(i, :)=vav;
-    tmidMat(i, :)=tmid;
-    numMid=length(vav);
+    data{1, i}=vav;
+    data{2, i}=tmid;
+end
+
+len = cellfun(@length, data)
+
+if all(len==len(1))
+    display("all arrays are of equal lengths")
+    MAX = max(len(:));
+else
+    MAX = max(len(:));
     
-    growthRate(i, :)=vav.*3600;
-    preShock(i, :)=growthRate(i,1:(numMid/2));
-    postShock(i,:)=growthRate(i,(numMid/2+1):numMid);   
+    for i=1:numFile
+        measure = length(data{1,i}(1, :));
+        if  measure < MAX
+            col= MAX - measure;
+            data{1,i}(1, MAX-col+1:MAX)=NaN(1,col);
+            data{2,i}(1, MAX-col+1:MAX)=NaN(1,col);
+        else
+            display("array of equal lengths")
+            tmid=data{2,i}(1, :);
+        end 
+    end
 end
 
-figure, hold on
 for i=1:numFile
-    title('Growth Rate vs. Time')
-    condlab=['Colony ' num2str(i)]
-    plot(tmid, growthRate(i, :), 'Color', cmap(i, :), 'Display', condlab)
-    xlabel('Time (s)')
-    ylabel(strcat('Growth Rate (s^{-1})')) %Shouldn't this be h^-1?
-    fig2pretty
-    %savefig([basename,'_growthRate.fig'])
+    growthRate(i, :)=data{1,i}(1, :).*3600;
+    preShock(i, :)=growthRate(i,1:(MAX/2));
+    postShock(i,:)=growthRate(i,(MAX/2+1):MAX);   
 end
-hold off
 
-figure, hold on
-for i=1:numFile
-    condlab=['Colony ' num2str(i)]
-    plot(tmid(1, 1:(numMid/2)),preShock(i, :), 'Color', cmap2(i*30, :), 'Display', condlab)
-    plot(tmid(1,(numMid/2+1):numMid),postShock(i, :), 'Color', cmap3(i*10, :), 'Display', condlab)
-end
-title('Average Growth Rate vs. Time')
-%dpts=size
 preMean=mean(preShock);
 postMean=mean(postShock);
-plot(tmid(1, 1:(numMid/2)),preMean,'LineWidth', 1.5, 'Color', 'blue')
-plot(tmid(1,(numMid/2+1):numMid),postMean,'LineWidth', 1.5, 'Color', 'red')
+
+h1=figure, hold on
+for i=1:numFile
+    condlab=['Colony ' num2str(i)];
+    plot(tmid, growthRate(i, :), 'LineWidth', 0.5,'Color', cmap(256-(i*30), :), 'Display', condlab)
+    %title('Growth Rate vs. Time')
+    %xlabel('Time (s)')
+    %ylabel(strcat('Growth Rate (s^{-1})')) %Shouldn't this be h^-1?
+    %fig2pretty
+    %savefig([basename,'_growthRate.fig'])
+    
+   %{
+    figure, hold on
+    for i=1:numFile
+    condlab=['Colony ' num2str(i)]
+    plot(tmid(1, 1:(numMid/2)),preShock(i, :), 'LineWidth', 0.5,'Color', cmap2(256-(i*30), :), 'Display', condlab)
+    plot(tmid(1,(numMid/2+1):numMid),postShock(i, :), 'LineWidth', 0.5, 'Color', cmap3(256-(i*10), :), 'Display', condlab)
+    end
+    %}
+%dpts=size
+end
+plot(tmid(1, 1:(MAX/2)),preMean,'LineWidth', 3, 'Color', 'blue', 'Display', 'Pre-shock Avg')
+plot(tmid(1,(MAX/2+1):MAX),postMean,'LineWidth', 3, 'Color', 'red', 'Display', 'Post-shock Avg')
 %condlab(numFile + 1)= 'Average Pre-shock';
 %condlab(numFile + 2)= 'Average Post-shock';
+title('Average Growth Rate vs. Time')
 xlabel('Time (s)')
 ylabel('Growth Rate (s^{-1})')
 fig2pretty
+legend('Location', 'southeast')
 %legend(condlab)
 %legend(condlab, Average)
-%saveas(gcf, [basename,'_eTraces.png'])
+hold off
+figure(h1)
+cd(maindir);
+savefig('growthRate.fig')
+saveas(gcf, 'growthRate.png')
 %}
