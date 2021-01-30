@@ -26,10 +26,10 @@ close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='06162020_dSigM_nutrientShift_colony7';
-dirname={['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_phase'];
-      ['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_fluor']};
-regname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_crop']; 
+basename='08052020_hyposhock';
+dirname={['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08052020_hyposhock/' basename '_phase'];
+      ['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08052020_hyposhock/' basename '_fluor']};
+regname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/08052020_hyposhock/' basename '_crop']; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 workdir=pwd;
