@@ -64,20 +64,21 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='06162020_yhdL_nutrientShift_colony2';%Name of the image stack, used to save file.
-dirname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_2_b'];%Directory that the image stack is saved in.
-savedir=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename];%Directory to save the output .mat file to.
+basename='03142021_Exp1_colony1';%Name of the image stack, used to save file.
+dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03142021_analysis/' basename '_aligned'];%Directory that the image stack is saved in.
+savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03142021_analysis/' basename '_figures'];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
 lscale=0.08;%%Microns per pixel.
-tscale=60;%Frame rate.
+tscale=10;%Frame rate.
 thresh=0;%For default, enter zero.
-IntThresh=20000;%Threshold used to enhance contrast. Default:35000
-dr=1;%Radius of dilation before watershed 
-sm=2;%Parameter used in edge detection
-minL=2;%Minimum cell length
-minW=0.2;%Minimum cell width
-maxW=1.5;%Maximum cell width
-minA=50;%Minimum cell area. default 50
+IntThresh=2770;%Threshold used to enhance contrast. Default:35000
+dr=1;%Radius of dilation before watershed %default: 1
+sm=2;%Parameter used in edge detection %default: 2
+minL=2;%Minimum cell length default: 2
+maxL=40; %Maximum cell length
+minW=0.2;%Minimum cell width default: 0.2
+maxW=2.5;%Maximum cell width
+minA=100;%Minimum cell area. default: 50
 cellLink=4;%Number of frames to ignore missing cells when tracking frame to frame
 recrunch=0;%Display data from previously crunched data? 0=No, 1=Yes.
 vis=1;%Display cell tracking? 0=No, 1=Yes.
@@ -85,7 +86,7 @@ checkhist=0;%Display image histogram? 0=No, 1=Yes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if recrunch==1
-    load([basename '_BT'])
+    load(['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03022021_analysis/03022021_Exp1/' basename '/' basename '_figures' '/' basename '_BTphase.mat'])
 else
 
 %Determine number of frames
@@ -142,16 +143,23 @@ for t=1:T
     im=imread(imagename);
     [imM,imN]=size(im);
     
+    %imshow(im)
+    %pause
+    
     %De-speckle image
     im=medfilt2(im);
+    %imshow(im)
+    %pause
     
     %Normalize images
     ppix=0.5;
     im=norm16bit(im,ppix);
+    %imshow(im)
+    %pause
     
     %Enhance contrast
     imc=imcomplement(im);
-    if checkhist==1;
+    if checkhist==1 & t < 2;
         figure,imhist(imc),pause;
     end
     
@@ -165,14 +173,22 @@ for t=1:T
     end
     imc=imadjust(imc,[thresh1/65535 1],[]);   
      
+    %imshow(imc)
+    %pause
+    
     %Find edges
     [ed2,thresh2]=edge(imc,'canny',[],sm*sqrt(2));
+    %imshow(imc)
+    %pause 
     
     %Clean image
     cc=bwconncomp(ed2,8);
     stats=regionprops(cc,imc,'Area','MeanIntensity');
     idx=find([stats.Area]>minA&[stats.Area]<1e5&[stats.MeanIntensity]>IntThresh);
     ed2=ismember(labelmatrix(cc),idx);
+    
+    %imshow(ed2)
+    %pause
     
     %Close gaps in edges
     despurred=bwmorph(ed2,'spur');
@@ -188,6 +204,9 @@ for t=1:T
     ed2=imdilate(ed2,se);
     ed2=bwmorph(ed2,'thin',2);
     
+    %imshow(ed2)
+    %pause
+    
     %Identify cells based on size and intensity
     ed3=~ed2;
     ed3(1,:)=ones(1,imN);
@@ -199,6 +218,9 @@ for t=1:T
     stats=regionprops(cc,imc,'Area','MeanIntensity');
     idx=find([stats.Area]>minA&[stats.Area]<1e5&[stats.MeanIntensity]>3e4);
     ed4=ismember(labelmatrix(cc),idx);
+    
+    %imshow(ed4)
+    %pause
     
     %Find cell areas and centroids
     bw=bwmorph(ed4,'thicken');
@@ -250,8 +272,8 @@ for t=1:T
     allcentroids=[allcentroids;centroids];
     tstamp=[tstamp;ones(nc(t),1)*t];
     cellnum=[cellnum;(1:nc(t))'];
-    
-if vis==1
+
+if vis==1 & t < 6 | t > T-10
    figure
    imshow(im)
    hold on
@@ -401,9 +423,9 @@ wcell=wcell*lscale;
 acell=acell*lscale^2;
 
 %Throw away cells that are too short or too fat or too skinny
-lcell(lcell<minL|wcell>maxW|wcell<minW)=NaN;
-wcell(lcell<minL|wcell>maxW|wcell<minW)=NaN;
-acell(lcell<minL|wcell>maxW|wcell<minW)=NaN;
+lcell(lcell<minL|lcell>maxL|wcell>maxW|wcell<minW)=NaN;
+wcell(lcell<minL|lcell>maxL|wcell>maxW|wcell<minW)=NaN;
+acell(lcell<minL|lcell>maxL|wcell>maxW|wcell<minW)=NaN;
 
 %Calculate circumferential strain
 wcell(isnan(wcell))=0;
@@ -480,7 +502,10 @@ ew(ew==0)=NaN;
 
 end
 
+
 %Plot data
+cd(savedir);
+
 figure(1), title('Cell Length vs. Time')
 clf
 hold on
@@ -493,7 +518,10 @@ for i=1:ncells
 end
 xlabel('Time (s)')
 ylabel('Length (\mum)')
+xline(300, '--k', 'PBS')
+xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
+saveas(gcf,[basename,'_CWT.png'])
 
 figure(2), title('Cell Width vs. Time')
 hold on
@@ -504,6 +532,9 @@ plot(time,wav,'-r','LineWidth',2)
 xlabel('Time (s)')
 ylabel('Width (/mum)')
 fig2pretty
+xline(300, '--k', 'PBS')
+xline(1400, '--k', 'PBS + 3 M sorbitol')
+saveas(gcf, [basename,'_wTraces.png'])
 
 % figure(4), title('Circumferential Strain vs. Time')
 % hold on
@@ -525,7 +556,10 @@ end
 plot(tmid,vav,'-r')
 xlabel('Time (s)')
 ylabel('Elongation Rate (s^{-1})')
+xline(300, '--k', 'PBS')
+xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
+saveas(gcf, [basename,'_eTraces.png'])
 
 figure(6), title('Elongation Rate vs. Time')
 hold on
@@ -533,8 +567,11 @@ ciplot((vav-vstd)*3600,(vav+vstd)*3600,tmid,[0.75 0.75 1])
 plot(tmid,vav*3600,'-r')
 xlabel('Time (s)')
 ylabel('Elongation (hr^{-1})')
+yline(2, '--b')
+xline(300, '--k', 'PBS')
+xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
-
-cd(dirname);
-save([basename '_BT'])
-save([basename '_BTlab'],'labels','labels2','-v7.3')
+saveas(gcf, [basename,'_ET.png'])
+save([basename '_BTphase'])
+%save([basename '_BTlab'],'labels','labels2','-v7.3')
+   

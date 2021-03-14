@@ -175,35 +175,137 @@ for j=1:length(strainlab)
     
     growth(j+6).ODnorm = growth(j+6).ODavg - blank3_avg;
     growth(j+6).dOD=growth(j+6).ODnorm(:,2:2:end)-growth(j+6).ODnorm(:,1:2:end-1);
-    growth(j+6).eOD=growth(j+6).dOD./(growth(j+6).ODnorm(:,1:2:end-1))/600;
-    growth(j+6).eODsmooth=movingaverage(growth(j+6).eOD,10) * 3600; %what is moving average? the derivative?
-    growth(j+6).max = max(growth(j+6).eODsmooth);
+    growthSorb(j).eOD=growthSorb(j).dOD./(growth(j+6).ODnorm(:,1:2:end-1))/600;
+    growthSorb(j).eODsmooth=movingaverage(growthSorb(j).eOD,10) * 3600; %what is moving average? the derivative?
+    growthSorb(j).max = max(growthSorb(j).eODsmooth);
 
-    %flag = flag + 1;
+    flag = flag + 1;
 end
 
 %Now, let's plot it
 figure, hold on
-for j=1:length(strainlab)
-plot(tim,growth(j+6).eODsmooth)
+for j=1:length(condlab)
+plot(tim,growthSorb(j).eODsmooth)
 end
 xlabel('Time (h)')
 ylabel('Growth Rate in LB + 1 M sorbitol (h^{-1})')
 fig2pretty
-legend(strainlab)
+legend(condlab)
+cd(dirname)
+saveas(gcf, [filename '_gr2'])
+saveas(gcf, [filename '_gr2.png'])
+
+figure, hold on
+for j=1:length(condlab)  
+plot(time2,growthSorb(j).ODnorm)
+end
+xlabel('Time (h)')
+ylabel('OD in LB + 1 M sorbitol (AU)')
+fig2pretty
+legend(condlab)
+cd(dirname)
+saveas(gcf, [filename '_OD2'])
+saveas(gcf, [filename '_OD2.png'])
+
+%%%%%The sytox and FITC-dextran data
+condlab2 = {'LB + 0.2 \muM sytox', 'LB + 0.02 \muM sytox', 'LB + 0.002 \muM sytox', 'LB + 100 \mug/mL FITC-dextran (10kDa)', 'LB + 10 \mug/mL FITC-dextran (10kDa)', 'LB + 1 \mug/mL FITC-dextran (10kDa)'};
+
+%pre-allocate a structure
+growthDye = struct; 
+
+for j=1:length(condlab2)
+    
+    growthDye(j).name = condlab2(j);
+    
+    index=[6:8];
+    index=index + 10*(j-1); 
+    index
+
+    growthDye(j).rep1 = OD(index(1), :);
+    growthDye(j).rep2 = OD(index(2), :);
+    growthDye(j).rep3 = OD(index(3), :);
+    set = [growthDye(j).rep1; growthDye(j).rep2; growthDye(j).rep3];
+    growthDye(j).ODavg = mean(set);
+    
+    growthDye(j).ODnorm = growthDye(j).ODavg - blank1_avg;
+    growthDye(j).dOD=growthDye(j).ODnorm(:,2:2:end)-growthDye(j).ODnorm(:,1:2:end-1);
+    growthDye(j).eOD=growthDye(j).dOD./(growthDye(j).ODnorm(:,1:2:end-1))/600;
+    growthDye(j).eODsmooth=movingaverage(growthDye(j).eOD,10) * 3600; %what is moving average? the derivative?
+    growthDye(j).max = max(growthDye(j).eODsmooth);
+
+    flag = flag + 1;
+end
+
+%Now, let's plot it
+figure, hold on
+for j=1:length(condlab2)
+plot(tim,growthDye(j).eODsmooth)
+end
+xlabel('Time (h)')
+ylabel('Growth Rate (h^{-1})')
+fig2pretty
+legend(condlab2)
 cd(dirname)
 saveas(gcf, [filename '_gr3'])
 saveas(gcf, [filename '_gr3.png'])
 
 figure, hold on
-for j=1:length(strainlab)  
-plot(time2,growth(j+6).ODnorm)
+for j=1:length(condlab2)  
+plot(time2,growthDye(j).ODnorm)
 end
 xlabel('Time (h)')
-ylabel('OD in LB + 1 M sorbitol (AU)')
+ylabel('OD (AU)')
 fig2pretty
-legend(strainlab)
+legend(condlab2)
 cd(dirname)
 saveas(gcf, [filename '_OD3'])
 saveas(gcf, [filename '_OD3.png'])
+
+save('02232021_growthCurve.mat')
+
+%%%%%%%%%%let's run a final check
+for j=1:length(condlab2)
+    
+    growthDye(j).name = condlab2(j);
+    
+    index=[6:8];
+    index=index + 10*(j-1); 
+    index
+
+    growthDye(j).rep1 = OD(index(1), :);
+    growthDye(j).rep2 = OD(index(2), :);
+    growthDye(j).rep3 = OD(index(3), :);
+    set = [growthDye(j).rep1; growthDye(j).rep2; growthDye(j).rep3];
+    growthDye(j).ODavg = mean(set);
+    
+    growthDye(j).ODnorm = growthDye(j).ODavg - blank2_avg;
+    growthDye(j).dOD=growthDye(j).ODnorm(:,2:2:end)-growthDye(j).ODnorm(:,1:2:end-1);
+    growthDye(j).eOD=growthDye(j).dOD./(growthDye(j).ODnorm(:,1:2:end-1))/600;
+    growthDye(j).eODsmooth=movingaverage(growthDye(j).eOD,10) * 3600; %what is moving average? the derivative?
+    growthDye(j).max = max(growthDye(j).eODsmooth);
+
+    flag = flag + 1;
+end
+
+%Now, let's plot it
+figure, hold on
+for j=1:length(condlab2)
+plot(tim,growthDye(j).eODsmooth)
+end
+xlabel('Time (h)')
+ylabel('Growth Rate (h^{-1})')
+fig2pretty
+legend(condlab2)
+cd(dirname)
+
+
+figure, hold on
+for j=1:length(condlab2)  
+plot(time2,growthDye(j).ODnorm)
+end
+xlabel('Time (h)')
+ylabel('OD (AU)')
+fig2pretty
+legend(condlab2)
+cd(dirname)
 
