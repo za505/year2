@@ -24,9 +24,12 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='051215_1';
-channels={['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/' basename '_2_a']};
-recrunch=1;
+basename='03172021_Exp1_colony2';
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
+channels={[filename '/' basename '_647/' basename '_full']};
+%channels={[filename '/' basename '_647/' basename '_full']};
+tstart=20; %frame when fluor dye intitally perfused
+recrunch=0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if recrunch==0;
@@ -37,8 +40,8 @@ for i=1:length(channels)
     fluo_directory{i}=dir('*.tif');
 end
 
-load([basename '_BT'])
-load([basename '_BTlab'])
+load([filename '/' basename '_phase/' basename '_figures/' basename '_BTphase'])
+%load([basename '_BTlab'])
 
 intensities=cell(length(channels),1);
 
@@ -64,20 +67,28 @@ for i=1:length(channels)
     icell_av{i}=nanmean(icell{i});
 end
 
-save([basename '_BTfluo'])
+cd([filename])
+save([filename '/' basename '_647/' basename '_BT647'])
 
 elseif recrunch==1
-    load ([basename '_BTfluo'])
+    load ([filename '/' basename '_647/' basename '_BT647'])
 end
 
 %Plot data
 figure, hold on, 
 for i=1:ncells
-    plot(time,icell{1}(i,:))
+    plot(time(tstart:end),icell{1}(i,tstart:end))
 end
-plot(time,icell_av{1},'-r')
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
+saveas(gcf, [filename '/' basename '_647/' basename,'_647trace.png'])
 
-save([basename '_BTfluo'])
+figure
+plot(time(tstart:end),icell_av{1}(tstart:end),'-r')
+xlabel('Time (s)')
+ylabel('Intensity (A.U.)')
+fig2pretty
+saveas(gcf, [filename '/' basename '_647/' basename,'_647avg.png'])
+
+save([filename '/' basename '_647/' basename '_BT647'])
