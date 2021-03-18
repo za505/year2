@@ -64,29 +64,31 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='03142021_Exp1_colony1';%Name of the image stack, used to save file.
-dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03142021_analysis/' basename '_aligned'];%Directory that the image stack is saved in.
-savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03142021_analysis/' basename '_figures'];%Directory to save the output .mat file to.
+basename='03172021_Exp1_colony2';%Name of the image stack, used to save file.
+dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_aligned'];%Directory that the image stack is saved in.
+savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_figures'];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
 lscale=0.08;%%Microns per pixel.
 tscale=10;%Frame rate.
 thresh=0;%For default, enter zero.
-IntThresh=2770;%Threshold used to enhance contrast. Default:35000
+IntThresh=6014;%Threshold used to enhance contrast. Default:35000
 dr=1;%Radius of dilation before watershed %default: 1
 sm=2;%Parameter used in edge detection %default: 2
 minL=2;%Minimum cell length default: 2
 maxL=40; %Maximum cell length
 minW=0.2;%Minimum cell width default: 0.2
 maxW=2.5;%Maximum cell width
-minA=100;%Minimum cell area. default: 50
+minA=50;%Minimum cell area. default: 50
+dotA_min=8800; %area range of the 'dots' (pillars) in the trap
+dotA_max=8850;
 cellLink=4;%Number of frames to ignore missing cells when tracking frame to frame
-recrunch=0;%Display data from previously crunched data? 0=No, 1=Yes.
+recrunch=1;%Display data from previously crunched data? 0=No, 1=Yes.
 vis=1;%Display cell tracking? 0=No, 1=Yes.
 checkhist=0;%Display image histogram? 0=No, 1=Yes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if recrunch==1
-    load(['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03022021_analysis/03022021_Exp1/' basename '/' basename '_figures' '/' basename '_BTphase.mat'])
+    load([savedir '/' basename '_BTphase.mat'])
 else
 
 %Determine number of frames
@@ -427,6 +429,26 @@ lcell(lcell<minL|lcell>maxL|wcell>maxW|wcell<minW)=NaN;
 wcell(lcell<minL|lcell>maxL|wcell>maxW|wcell<minW)=NaN;
 acell(lcell<minL|lcell>maxL|wcell>maxW|wcell<minW)=NaN;
 
+%Throw away dots that may have been tracked
+lcell(acell>dotA_min&acell<dotA_max)=NaN;
+wcell(acell>dotA_min&acell<dotA_max)=NaN;
+acell(acell>dotA_min&acell<dotA_max)=NaN;
+
+%let's just get rid of some more noise
+for i=1:height(lcell)
+    if sum(isnan(lcell(i, :))) > T/3
+        lcell(i, :) = NaN;
+    end
+    
+    if sum(isnan(wcell(i, :))) > T/3
+        wcell(i, :) = NaN;
+    end
+    
+    if sum(isnan(acell(i, :))) > T/3
+        acell(i, :) = NaN;
+    end
+end
+
 %Calculate circumferential strain
 wcell(isnan(wcell))=0;
 ew=zeros(size(lcell));
@@ -518,8 +540,11 @@ for i=1:ncells
 end
 xlabel('Time (s)')
 ylabel('Length (\mum)')
-xline(300, '--k', 'PBS')
-xline(1400, '--k', 'PBS + 3 M sorbitol')
+xline(60, '--k', 'PBS + 5% detergent')
+xline(180, '--k', '6.66 mM Mg2+')
+xline(300, '--k', '12.33 mM Mg2+')
+xline(420, '--k', '20 mM Mg2+')
+%xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
 saveas(gcf,[basename,'_CWT.png'])
 
@@ -532,8 +557,11 @@ plot(time,wav,'-r','LineWidth',2)
 xlabel('Time (s)')
 ylabel('Width (/mum)')
 fig2pretty
-xline(300, '--k', 'PBS')
-xline(1400, '--k', 'PBS + 3 M sorbitol')
+xline(60, '--k', 'PBS + 5% detergent')
+xline(180, '--k', '6.66 mM Mg2+')
+xline(300, '--k', '12.33 mM Mg2+')
+xline(420, '--k', '20 mM Mg2+')
+%xline(1400, '--k', 'PBS + 3 M sorbitol')
 saveas(gcf, [basename,'_wTraces.png'])
 
 % figure(4), title('Circumferential Strain vs. Time')
@@ -556,8 +584,11 @@ end
 plot(tmid,vav,'-r')
 xlabel('Time (s)')
 ylabel('Elongation Rate (s^{-1})')
-xline(300, '--k', 'PBS')
-xline(1400, '--k', 'PBS + 3 M sorbitol')
+xline(60, '--k', 'PBS + 5% detergent')
+xline(180, '--k', '6.66 mM Mg2+')
+xline(300, '--k', '12.33 mM Mg2+')
+xline(420, '--k', '20 mM Mg2+')
+%xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
 saveas(gcf, [basename,'_eTraces.png'])
 
@@ -568,8 +599,11 @@ plot(tmid,vav*3600,'-r')
 xlabel('Time (s)')
 ylabel('Elongation (hr^{-1})')
 yline(2, '--b')
-xline(300, '--k', 'PBS')
-xline(1400, '--k', 'PBS + 3 M sorbitol')
+xline(60, '--k', 'PBS + 5% detergent')
+xline(180, '--k', '6.66 mM Mg2+')
+xline(300, '--k', '12.33 mM Mg2+')
+xline(420, '--k', '20 mM Mg2+')
+%xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
 saveas(gcf, [basename,'_ET.png'])
 save([basename '_BTphase'])
