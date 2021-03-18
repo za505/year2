@@ -64,14 +64,14 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='03172021_Exp1_colony3';%Name of the image stack, used to save file.
+basename='03172021_Exp2_colony1';%Name of the image stack, used to save file.
 dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_aligned'];%Directory that the image stack is saved in.
 savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_figures'];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
 lscale=0.08;%%Microns per pixel.
 tscale=10;%Frame rate.
 thresh=0;%For default, enter zero.
-IntThresh=12300;%Threshold used to enhance contrast. Default:35000
+IntThresh=11570;%Threshold used to enhance contrast. Default:35000
 dr=1;%Radius of dilation before watershed %default: 1
 sm=2;%Parameter used in edge detection %default: 2
 minL=2;%Minimum cell length default: 2
@@ -540,10 +540,11 @@ for i=1:ncells
 end
 xlabel('Time (s)')
 ylabel('Length (\mum)')
-xline(60, '--k', 'PBS + 5% detergent')
-xline(180, '--k', '6.66 mM Mg2+')
-xline(300, '--k', '12.33 mM Mg2+')
-xline(420, '--k', '20 mM Mg2+')
+xline(100, '--k', 'PBS + 5% detergent')
+xline(220, '--k', 'PBS + 647')
+xline(330, '--k', 'PBS + FSS')
+xline(450, '--k', 'PBS + CF')
+xline(580, '--k', 'PBS + AF')
 %xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
 saveas(gcf,[basename,'_CWT.png'])
@@ -557,10 +558,11 @@ plot(time,wav,'-r','LineWidth',2)
 xlabel('Time (s)')
 ylabel('Width (/mum)')
 fig2pretty
-xline(60, '--k', 'PBS + 5% detergent')
-xline(180, '--k', '6.66 mM Mg2+')
-xline(300, '--k', '12.33 mM Mg2+')
-xline(420, '--k', '20 mM Mg2+')
+xline(100, '--k', 'PBS + 5% detergent')
+xline(220, '--k', 'PBS + 647')
+xline(330, '--k', 'PBS + FSS')
+xline(450, '--k', 'PBS + CF')
+xline(580, '--k', 'PBS + AF')
 %xline(1400, '--k', 'PBS + 3 M sorbitol')
 saveas(gcf, [basename,'_wTraces.png'])
 
@@ -584,10 +586,11 @@ end
 plot(tmid,vav,'-r')
 xlabel('Time (s)')
 ylabel('Elongation Rate (s^{-1})')
-xline(60, '--k', 'PBS + 5% detergent')
-xline(180, '--k', '6.66 mM Mg2+')
-xline(300, '--k', '12.33 mM Mg2+')
-xline(420, '--k', '20 mM Mg2+')
+xline(100, '--k', 'PBS + 5% detergent')
+xline(220, '--k', 'PBS + 647')
+xline(330, '--k', 'PBS + FSS')
+xline(450, '--k', 'PBS + CF')
+xline(580, '--k', 'PBS + AF')
 %xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
 saveas(gcf, [basename,'_eTraces.png'])
@@ -599,10 +602,11 @@ plot(tmid,vav*3600,'-r')
 xlabel('Time (s)')
 ylabel('Elongation (hr^{-1})')
 yline(2, '--b')
-xline(60, '--k', 'PBS + 5% detergent')
-xline(180, '--k', '6.66 mM Mg2+')
-xline(300, '--k', '12.33 mM Mg2+')
-xline(420, '--k', '20 mM Mg2+')
+xline(100, '--k', 'PBS + 5% detergent')
+xline(220, '--k', 'PBS + 647')
+xline(330, '--k', 'PBS + FSS')
+xline(450, '--k', 'PBS + CF')
+xline(580, '--k', 'PBS + AF')
 %xline(1400, '--k', 'PBS + 3 M sorbitol')
 fig2pretty
 saveas(gcf, [basename,'_ET.png'])
