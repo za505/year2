@@ -14,12 +14,13 @@ close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input 
-basename='12122020_pronase2';
+basename='03172021_Exp2_colony1';
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
 
 sfac=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-cd(['/Users/zarina/Downloads/MATLAB/projects/year2/hypershock_data/', basename])
+cd([filename '/' basename '_phase/' basename '_figures/'])
 filelist = dir('*_BTphase.mat');
 
 %filelist=filelist(end);
@@ -93,11 +94,14 @@ Lsmooth=(Leff-movingaverage(Leff,12))./movingaverage(Leff,12);
 
 figure, title('Effective Length vs. Time')
 plot(tmid,Leff)
-xlabel('t (min)')
+xlabel('t (s)')
 ylabel('l_{eff} (\mum)')
 fig2pretty
-xline(300, '--k', '3 M sorbitol')
-xline(600, '--k', '3 M sorbitol + pronase')
+xline(60, '--k', '*PBS + 5% detergent')
+xline(132, '--k', '*PBS + 647')
+xline(198, '--k', '*PBS + 647 + FSS')
+xline(318, '--k', '*PBS + 647 + CF')
+xline(438, '--k', '*PBS + 647 + AF')
 saveas(gcf, [basename,'_effLength.png'])
 
 % [mvt,~]=size(vt);
@@ -158,16 +162,21 @@ saveas(gcf, [basename,'_effLength.png'])
 
 figure,hold on
 for i=1:lct
-    indx=isnan(lcellt(i,:))~=1;
+    %indx=isnan(lcellt(i,:))~=1;
+    indx=lcellt(i,:)~=0;
     indx=find(indx);
+    plot(time(indx),lcellt(i,indx))
     %plot(time(indx)/60,lcellt(i,indx))
     %plot(time(1:end),lcell(i,1:end)) 
 end
-xlabel('t (min)')
+xlabel('t (s)')
 ylabel('Cell Wall Length (\mum)')
 fig2pretty
-xline(300, '--k', '3 M sorbitol')
-xline(600, '--k', '3 M sorbitol + pronase')
+xline(60, '--k', '*PBS + 5% detergent')
+xline(132, '--k', '*PBS + 647')
+xline(198, '--k', '*PBS + 647 + FSS')
+xline(318, '--k', '*PBS + 647 + CF')
+xline(438, '--k', '*PBS + 647 + AF')
 saveas(gcf, [basename,'_lengthTrace.png'])
 
 % figure
