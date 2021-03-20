@@ -64,7 +64,7 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='03172021_Exp1_colony3';%Name of the image stack, used to save file.
+basename='03172021_Exp2_colony3';%Name of the image stack, used to save file.
 dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_aligned'];%Directory that the image stack is saved in.
 savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_figures'];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
@@ -541,10 +541,10 @@ end
 xlabel('Time (s)')
 ylabel('Length (\mum)')
 xline(60, '--k', '*PBS + 5% detergent')
-xline(114, '--k', '*PBS + 647 + FSS')
-xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+')
-xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+')
-xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+')
+xline(132, '--k', '*PBS + 647')
+xline(198, '--k', '*PBS + 647 + FSS')
+xline(318, '--k', '*PBS + 647 + CF')
+xline(438, '--k', '*PBS + 647 + AF')
 fig2pretty
 saveas(gcf,[basename,'_lTraces.png'])
 
@@ -558,10 +558,10 @@ xlabel('Time (s)')
 ylabel('Width (/mum)')
 fig2pretty
 xline(60, '--k', '*PBS + 5% detergent')
-xline(114, '--k', '*PBS + 647 + FSS')
-xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+')
-xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+')
-xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+')
+xline(132, '--k', '*PBS + 647')
+xline(198, '--k', '*PBS + 647 + FSS')
+xline(318, '--k', '*PBS + 647 + CF')
+xline(438, '--k', '*PBS + 647 + AF')
 saveas(gcf, [basename,'_wTraces.png'])
 
 % figure(4), title('Circumferential Strain vs. Time')
@@ -585,10 +585,10 @@ plot(tmid,vav,'-r')
 xlabel('Time (s)')
 ylabel('Elongation Rate (s^{-1})')
 xline(60, '--k', '*PBS + 5% detergent')
-xline(114, '--k', '*PBS + 647 + FSS')
-xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+')
-xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+')
-xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+')
+xline(132, '--k', '*PBS + 647')
+xline(198, '--k', '*PBS + 647 + FSS')
+xline(318, '--k', '*PBS + 647 + CF')
+xline(438, '--k', '*PBS + 647 + AF')
 fig2pretty
 saveas(gcf, [basename,'_eTraces.png'])
 
@@ -600,10 +600,10 @@ xlabel('Time (s)')
 ylabel('Elongation (hr^{-1})')
 yline(2, '--b')
 xline(60, '--k', '*PBS + 5% detergent')
-xline(114, '--k', '*PBS + 647 + FSS')
-xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+')
-xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+')
-xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+')
+xline(132, '--k', '*PBS + 647')
+xline(198, '--k', '*PBS + 647 + FSS')
+xline(318, '--k', '*PBS + 647 + CF')
+xline(438, '--k', '*PBS + 647 + AF')
 fig2pretty
 saveas(gcf, [basename,'_ET.png'])
 save([basename '_BTphase'])
