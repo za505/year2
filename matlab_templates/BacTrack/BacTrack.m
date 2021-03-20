@@ -64,14 +64,14 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='03172021_Exp2_colony3';%Name of the image stack, used to save file.
+basename='03172021_Exp3_colony3';%Name of the image stack, used to save file.
 dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_aligned'];%Directory that the image stack is saved in.
 savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_figures'];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
 lscale=0.08;%%Microns per pixel.
 tscale=10;%Frame rate.
 thresh=0;%For default, enter zero.
-IntThresh=5929;%Threshold used to enhance contrast. Default:35000
+IntThresh=11051;%Threshold used to enhance contrast. Default:35000
 dr=1;%Radius of dilation before watershed %default: 1
 sm=2;%Parameter used in edge detection %default: 2
 minL=2;%Minimum cell length default: 2
@@ -82,7 +82,7 @@ minA=50;%Minimum cell area. default: 50
 dotA_min=8800; %area range of the 'dots' (pillars) in the trap
 dotA_max=8850;
 cellLink=4;%Number of frames to ignore missing cells when tracking frame to frame
-recrunch=1;%Display data from previously crunched data? 0=No, 1=Yes.
+recrunch=0;%Display data from previously crunched data? 0=No, 1=Yes.
 vis=1;%Display cell tracking? 0=No, 1=Yes.
 checkhist=0;%Display image histogram? 0=No, 1=Yes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -540,11 +540,10 @@ for i=1:ncells
 end
 xlabel('Time (s)')
 ylabel('Length (\mum)')
-xline(60, '--k', '*PBS + 5% detergent')
-xline(132, '--k', '*PBS + 647')
-xline(198, '--k', '*PBS + 647 + FSS')
-xline(318, '--k', '*PBS + 647 + CF')
-xline(438, '--k', '*PBS + 647 + AF')
+xline(0, '--k', 'LB + 647')
+xline(154, '--k', '*PBS + 5% detergent')
+xline(274, '--k', '*PBS + 647')
+xline(394, '--k', '*PBS + 647 + 20 mM NaCl')
 fig2pretty
 saveas(gcf,[basename,'_lTraces.png'])
 
@@ -557,11 +556,10 @@ plot(time,wav,'-r','LineWidth',2)
 xlabel('Time (s)')
 ylabel('Width (/mum)')
 fig2pretty
-xline(60, '--k', '*PBS + 5% detergent')
-xline(132, '--k', '*PBS + 647')
-xline(198, '--k', '*PBS + 647 + FSS')
-xline(318, '--k', '*PBS + 647 + CF')
-xline(438, '--k', '*PBS + 647 + AF')
+xline(0, '--k', 'LB + 647')
+xline(154, '--k', '*PBS + 5% detergent')
+xline(274, '--k', '*PBS + 647')
+xline(394, '--k', '*PBS + 647 + 20 mM NaCl')
 saveas(gcf, [basename,'_wTraces.png'])
 
 % figure(4), title('Circumferential Strain vs. Time')
@@ -584,11 +582,10 @@ end
 plot(tmid,vav,'-r')
 xlabel('Time (s)')
 ylabel('Elongation Rate (s^{-1})')
-xline(60, '--k', '*PBS + 5% detergent')
-xline(132, '--k', '*PBS + 647')
-xline(198, '--k', '*PBS + 647 + FSS')
-xline(318, '--k', '*PBS + 647 + CF')
-xline(438, '--k', '*PBS + 647 + AF')
+xline(0, '--k', 'LB + 647')
+xline(154, '--k', '*PBS + 5% detergent')
+xline(274, '--k', '*PBS + 647')
+xline(394, '--k', '*PBS + 647 + 20 mM NaCl')
 fig2pretty
 saveas(gcf, [basename,'_eTraces.png'])
 
@@ -599,11 +596,10 @@ plot(tmid,vav*3600,'-r')
 xlabel('Time (s)')
 ylabel('Elongation (hr^{-1})')
 yline(2, '--b')
-xline(60, '--k', '*PBS + 5% detergent')
-xline(132, '--k', '*PBS + 647')
-xline(198, '--k', '*PBS + 647 + FSS')
-xline(318, '--k', '*PBS + 647 + CF')
-xline(438, '--k', '*PBS + 647 + AF')
+xline(0, '--k', 'LB + 647')
+xline(154, '--k', '*PBS + 5% detergent')
+xline(274, '--k', '*PBS + 647')
+xline(394, '--k', '*PBS + 647 + 20 mM NaCl')
 fig2pretty
 saveas(gcf, [basename,'_ET.png'])
 save([basename '_BTphase'])
