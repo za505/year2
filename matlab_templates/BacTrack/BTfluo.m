@@ -24,12 +24,12 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03172021_Exp1_colony2';
+basename='03172021_Exp1_colony3';
 filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
 channels={[filename '/' basename '_647/' basename '_full']};
 %channels={[filename '/' basename '_647/' basename '_full']};
 tstart=20; %frame when fluor dye intitally perfused
-recrunch=0;
+recrunch=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if recrunch==0;
@@ -82,13 +82,22 @@ end
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
+xline(60, '--k', 'PBS + 5% detergent')
+xline(180, '--k', '6.66 mM Mg2+')
+xline(300, '--k', '12.33 mM Mg2+')
+xline(420, '--k', '20 mM Mg2+')
 saveas(gcf, [filename '/' basename '_647/' basename,'_647trace.png'])
 
 figure
-plot(time(tstart:end),icell_av{1}(tstart:end),'-r')
+%plot(time(tstart:end),icell_av{1}(tstart:end),'-r')
+plot(time,icell_av{1},'-r')
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
+xline(60, '--k', 'PBS + 5% detergent')
+xline(180, '--k', '6.66 mM Mg2+')
+xline(300, '--k', '12.33 mM Mg2+')
+xline(420, '--k', '20 mM Mg2+')
 saveas(gcf, [filename '/' basename '_647/' basename,'_647avg.png'])
 
 save([filename '/' basename '_647/' basename '_BT647'])
