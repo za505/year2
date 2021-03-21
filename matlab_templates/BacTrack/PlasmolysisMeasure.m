@@ -70,26 +70,28 @@ if crunch==1
     %plot
     tiledlayout(1, 3)
     
-    nexttile
-    X=categorical({'immediately after shock', '10 min after shock'});
-    X=reordercats(X, {'immediately after shock', '10 min after shock'});
-    bar(X, [pitm; pftm])
+    %nexttile
+    %X=categorical({'immediately after shock', '10 min after shock'});
+    %X=reordercats(X, {'immediately after shock', '10 min after shock'});
+    X=[0,10];
+    createfigure(X, [pitm; pftm])
     ylabel('Plasmolysis Events/Micron Post-Hyperosmotic Shock')
+    xlabel({'Time (minutes after hypershock)'})
     legend('pbs 0 min','pbs 1 min', 'pbs 10 min', 'pbs 100 min')
     
-    nexttile
-    X=categorical({'immediately after shock', '10 min after shock'});
-    X=reordercats(X, {'immediately after shock', '10 min after shock'});
-    bar(X, [pism; pfsm])
-    ylabel('Septal Plasmolysis Events/Micron Post-Hyperosmotic Shock')
-    legend('pbs 0 min','pbs 1 min', 'pbs 10 min', 'pbs 100 min')
+    %nexttile
+    %X=categorical({'immediately after shock', '10 min after shock'});
+    %X=reordercats(X, {'immediately after shock', '10 min after shock'});
+    %bar(X, [pism; pfsm])
+    %ylabel('Septal Plasmolysis Events/Micron Post-Hyperosmotic Shock')
+    %legend('pbs 0 min','pbs 1 min', 'pbs 10 min', 'pbs 100 min')
     
-    nexttile
-    X=categorical({'immediately after shock', '10 min after shock'});
-    X=reordercats(X, {'immediately after shock', '10 min after shock'});
-    bar(X, [pilm; pflm])
-    ylabel('Lateral Plasmolysis Events/Micron Post-Hyperosmotic Shock')
-    legend('pbs 0 min','pbs 1 min', 'pbs 10 min', 'pbs 100 min')
+    %nexttile
+    %X=categorical({'immediately after shock', '10 min after shock'});
+    %X=reordercats(X, {'immediately after shock', '10 min after shock'});
+    %bar(X, [pilm; pflm])
+    %ylabel('Lateral Plasmolysis Events/Micron Post-Hyperosmotic Shock')
+    %legend('pbs 0 min','pbs 1 min', 'pbs 10 min', 'pbs 100 min')
 
 else
     nc=zeros(1,B); %we're interested in the number of cells counted for the controls
