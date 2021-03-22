@@ -24,13 +24,14 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03172021_Exp2_colony3';
+basename='03172021_Exp1_colony1';
 filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
 channels={[filename '/' basename '_FSS/' basename '_full']};
 %channels={[filename '/' basename '_FSS/' basename '_full']};
-switch1=40; %frame during switch 1
-switch2=50;
-switch3=60;
+switch1=20; %frame during switch 1
+switch2=31;
+switch3=44;
+switch4=57;
 recrunch=0;
 removeData=0; %change to 0 if you don't want to remove data points
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +85,11 @@ for i=1:length(channels)
         elseif t==switch3
             
             [p1, p2]=getBackground(imagename);
-        
+            
+        elseif t==switch4
+            
+            [p1, p2]=getBackground(imagename);
+            
         end 
         
         %measure background level
@@ -128,11 +133,11 @@ end
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + FSS + FSS') %frame 19-30
+xline(234, '--k', '*PBS + FSS + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + FSS + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + FSS + FSS + 20 mM Mg2+') %frame 57-69
 saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSStrace.png'])
 
 figure
@@ -141,11 +146,11 @@ plot(time,icell_av{1},'-r')
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + FSS + FSS') %frame 19-30
+xline(234, '--k', '*PBS + FSS + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + FSS + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + FSS + FSS + 20 mM Mg2+') %frame 57-69
 saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSavg.png'])
 
 figure, hold on, 
@@ -155,11 +160,11 @@ end
 xlabel('Time (s)')
 ylabel('Intensity Ratio (cell intensity/background)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + FSS + FSS') %frame 19-30
+xline(234, '--k', '*PBS + FSS + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + FSS + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + FSS + FSS + 20 mM Mg2+') %frame 57-69
 saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSratio.png'])
 
 save([filename '/' basename '_FSS/' basename '_BTFSS'])
