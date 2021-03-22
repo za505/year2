@@ -24,7 +24,7 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03172021_Exp2_colony2';
+basename='03172021_Exp2_colony3';
 filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
 channels={[filename '/' basename '_FSS/' basename '_full']};
 %channels={[filename '/' basename '_FSS/' basename '_full']};
@@ -32,6 +32,7 @@ switch1=40; %frame during switch 1
 switch2=50;
 switch3=60;
 recrunch=0;
+removeData=0; %change to 0 if you don't want to remove data points
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if recrunch==0;
@@ -70,25 +71,36 @@ for i=1:length(channels)
 
         if t==1
             
-            bglevel=getBackground(imagename);
+            [p1, p2]=getBackground(imagename);
             
         elseif t==switch1
             
-            bglevel=getBackground(imagename);
+            [p1, p2]=getBackground(imagename);
         
         elseif t==switch2
             
-            bglevel=getBackground(imagename);
+            [p1, p2]=getBackground(imagename);
             
         elseif t==switch3
             
-            bglevel=getBackground(imagename);
+            [p1, p2]=getBackground(imagename);
         
         end 
         
+        %measure background level
+        bglevel = measureBackground(imagename, p1, p2);
+        
         for j=1:ncells
-            intensities_temp(j,t)=mean(im(pixels{j,t}));
-            intensity_ratio(j,t)= bglevel/intensities_temp(j,t);
+            
+            %remove weird data points
+            if removeData~=0 & j == removeData
+                intensities_temp(j,t)=NaN;
+            else
+                %calculate intensity and intensity ratio
+                intensities_temp(j,t)=mean(im(pixels{j,t}));
+                intensity_ratio(j,t)= intensities_temp(j,t)/bglevel;
+            end
+            
         end
     end
     
@@ -100,7 +112,7 @@ icell_av=cell(length(channels),1);
 for i=1:length(channels)
     icell_av{i}=nanmean(icell{i});
 end
-
+    
 cd([filename])
 %save([filename '/' basename '_FSS/' basename '_BTFSS'])
 
@@ -121,7 +133,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSStrace.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSStrace.png'])
 
 figure
 %plot(time(tstart:end),icell_av{1}(tstart:end),'-r')
@@ -134,24 +146,26 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSavg.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSavg.png'])
 
 figure, hold on, 
 for i=1:ncells
     plot(time, intensity_ratio(i,:))
 end
 xlabel('Time (s)')
-ylabel('Intensity Ratio (background/cell insensity)')
+ylabel('Intensity Ratio (cell intensity/background)')
 fig2pretty
 xline(90, '--k', '*PBS + 5% detergent')
 xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSratio.png'])
 
-%save([filename '/' basename '_FSS/' basename '_BTFSS'])
+save([filename '/' basename '_FSS/' basename '_BTFSS'])
 
-function bglevel = getBackground(imagename)
+function [p1, p2]=getBackground(imagename)
+        
         %Load last image
         %imagename=fluo_directory{i}(t).name;
         im2=imread(imagename);
@@ -176,12 +190,20 @@ function bglevel = getBackground(imagename)
         y = [p1(2) p1(2) p1(2)+offset(2) p1(2)+offset(2) p1(2)];
         plot(x,y)
         p1=round(p1);
-        p2=round(p2); 
+        p2=round(p2);  
+end 
 
+function bglevel = measureBackground(imagename, p1, p2)
+        
+        %Load last image
+        %imagename=fluo_directory{i}(t).name;
+        im2=imread(imagename);
+        
         %Determine background
         backim=im2(p1(2):p2(2),p1(1):p2(1));
         [counts,bins]=imhist(backim);
         [~,binnum]=max(counts);
         maxpos=bins(binnum);
         bglevel=mean(mean(backim));
+        
 end 
