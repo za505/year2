@@ -26,7 +26,7 @@ clear, close all
 %USER INPUT
 basename='03172021_Exp2_colony1';
 filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
-channels={[filename '/' basename '_FSS/' basename '_full']};
+channels={[filename '/' basename '_647/' basename '_full']};
 frameAuto=30; %this is the frame that you'll pick the autofluorescence from
 frameBack=40; %this is the frame that you'll pick the background area from
 recrunch=0;
@@ -134,7 +134,6 @@ end
 
 %Plot data
 %Let's just measure intensity data first
-tiledlayout(1, 2)
 figure, hold on, title('Intensity vs Time')
 for i=1:ncells
     plot(time,icell_temp{1}(i,:))
@@ -147,7 +146,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSitemp.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSitemp.png'])
 
 figure, title('Avgerage Intensity vs Time')
 plot(time,icellAvg_temp{1},'-r')
@@ -159,14 +158,14 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSitempAvg.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSitempAvg.png'])
 
 %Now let's measure adj intensity data and see if it's better
-tiledlayout(1, 2)
-figure, hold on, title('Intensity (adjusted for background)')
+figure, hold on
 for i=1:ncells
     plot(time,icell_adj{1}(i,:))
 end
+title('Intensity (adjusted for background)')
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
@@ -175,7 +174,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiadj.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiadj.png'])
 
 figure, title('Avgerage Intensity (adjusted for background)')
 plot(time,icellAvg_adj{1},'-r')
@@ -187,23 +186,23 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiadjAvg.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiadjAvg.png'])
 
 %Now let's measure adj intensity data - autoFluo and see if it's better
-tiledlayout(1, 2)
-figure, hold on, title('Intensity (adjusted for autofluorescence and background)') 
+figure, hold on 
 for i=1:ncells
     plot(time,icell_auto{1}(i,:))
 end
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
+title('Intensity (adjusted for autofluorescence and background)')
 fig2pretty
 xline(90, '--k', '*PBS + 5% detergent')
 xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSauto.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSauto.png'])
 
 figure, title('Avgerage Intensity (adjusted for autofluorescence and background)')
 plot(time,icellAvg_auto{1},'-r')
@@ -215,14 +214,14 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiautoAvg.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiautoAvg.png'])
 
 %Finally, let's plot the ratio
-tiledlayout(1, 2)
-figure, hold on, title('Intensity/Background Ratio')
+figure, hold on
 for i=1:ncells
     plot(time,icell_ratio{1}(i,:))
 end
+title('Intensity/Background Ratio')
 xlabel('Time (s)')
 ylabel('Intensity/Background (A.U.)')
 fig2pretty
@@ -231,7 +230,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSratio.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSratio.png'])
 
 figure, title('Avgerage Intensity/Background Ratio')
 plot(time,icellAvg_ratio{1},'-r')
@@ -243,7 +242,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-%saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiratioAvg.png'])
+saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiratioAvg.png'])
 
 function [p1, p2]=getBackground(imagename)
         
