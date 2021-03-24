@@ -27,7 +27,7 @@ clear, close all
 basename='03172021_Exp2_colony1';
 filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
 channels={[filename '/' basename '_647/' basename '_full']};
-frameAuto=30; %this is the frame that you'll pick the autofluorescence from
+frameAuto=20; %this is the frame that you'll pick the autofluorescence from
 frameBack=40; %this is the frame that you'll pick the background area from
 recrunch=0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,13 +123,14 @@ for i=1:length(channels)
     icellAvg_adj{i}=nanmean(icell_adj{i});
     icellAvg_auto{i}=nanmean(icell_auto{i});
     icellAvg_ratio{i}=nanmean(icell_ratio{i});
-end
     
+end
+
 %cd([filename])
-%save([filename '/' basename '_FSS/' basename '_BTFSS'])
+%save([filename '/' basename '_647/' basename '_BTFSS'])
 
 elseif recrunch==1
-    load ([filename '/' basename '_FSS/' basename '_BTFSS'])
+    load ([filename '/' basename '_647/' basename '_BTFSS'])
 end
 
 %Plot data
@@ -146,7 +147,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSitemp.png'])
+saveas(gcf, [filename '/' basename '_647/' basename,'_647itemp.png'])
 
 figure, title('Avgerage Intensity vs Time')
 plot(time,icellAvg_temp{1},'-r')
@@ -158,7 +159,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSitempAvg.png'])
+saveas(gcf, [filename '/' basename '_647/' basename,'_647itempAvg.png'])
 
 %Now let's measure adj intensity data and see if it's better
 figure, hold on
@@ -174,7 +175,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiadj.png'])
+saveas(gcf, [filename '/' basename '_647/' basename,'_647iadj.png'])
 
 figure, title('Avgerage Intensity (adjusted for background)')
 plot(time,icellAvg_adj{1},'-r')
@@ -186,7 +187,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiadjAvg.png'])
+saveas(gcf, [filename '/' basename '_647/' basename,'_647iadjAvg.png'])
 
 %Now let's measure adj intensity data - autoFluo and see if it's better
 figure, hold on 
@@ -202,7 +203,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSauto.png'])
+saveas(gcf, [filename '/' basename '_647/' basename,'_647auto.png'])
 
 figure, title('Avgerage Intensity (adjusted for autofluorescence and background)')
 plot(time,icellAvg_auto{1},'-r')
@@ -214,7 +215,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiautoAvg.png'])
+saveas(gcf, [filename '/' basename '_647/' basename,'_647iautoAvg.png'])
 
 %Finally, let's plot the ratio
 figure, hold on
@@ -230,7 +231,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSratio.png'])
+saveas(gcf, [filename '/' basename '_647/' basename,'_647ratio.png'])
 
 figure, title('Avgerage Intensity/Background Ratio')
 plot(time,icellAvg_ratio{1},'-r')
@@ -242,7 +243,7 @@ xline(210, '--k', '*PBS + 647')
 xline(330, '--k', '*PBS + 647 + FSS')
 xline(450, '--k', '*PBS + 647 + CF')
 xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_FSS/' basename,'_FSSiratioAvg.png'])
+saveas(gcf, [filename '/' basename '_647/' basename,'_647iratioAvg.png'])
 
 function [p1, p2]=getBackground(imagename)
         
