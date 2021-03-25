@@ -24,12 +24,13 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03172021_Exp2_colony1';
+basename='03172021_Exp1_colony1';
 filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
-channels={[filename '/' basename '_647/' basename '_full']};
-frameAuto=20; %this is the frame that you'll pick the autofluorescence from
-frameBack=40; %this is the frame that you'll pick the background area from
+channels={[filename '/' basename '_647/' basename '_aligned']};
+frameAuto=19; %this is the LAST frame that has no dye
+frameBack=20; %this is the frame that you'll pick the background area from
 recrunch=0;
+auto=0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if recrunch==0
@@ -43,25 +44,15 @@ end
 load([filename '/' basename '_phase/' basename '_figures/' basename '_BTphase'])
 
 %preallocate cells
-icell_temp=cell(length(channels),1);
-icellAvg_temp=cell(length(channels),1);
-
-icell_adj=cell(length(channels),1);
-icellAvg_adj=cell(length(channels),1);
-
-icell_auto=cell(length(channels),1);
-icellAvg_auto=cell(length(channels),1);
-
-icell_ratio=cell(length(channels),1);
-icellAvg_ratio=cell(length(channels),1);
+icell_temp=cell(length(channels),1); %cellular intensities
+icellAvg_temp=cell(length(channels),1); %population average cellular intensity
+bgIntensity=zeros(1,T); %background intensity
+autoFluo=zeros(height(pxls),frameAuto); %intensity of cells prior to dye perfusion
 
 for i=1:length(channels)
     
     cd(channels{i}); 
-    intensity_temp=zeros(size(lcell)); %just a measure of mean intensity
-    intensity_adj=zeros(size(lcell)); %mean intensity - bglevel
-    intensity_auto=zeros(size(lcell)); %mean intensity - bglevel - autofluorescence
-    intensity_ratio=zeros(size(lcell)); %ratio intensity_auto/bglevel
+    intensity_temp=zeros(height(pxls)); %just a measure of cellular intensity
     
     %determine region where you'll measure background intensity
     imagename=fluo_directory{i}(frameBack).name;
@@ -72,10 +63,6 @@ for i=1:length(channels)
     %measure autointensity
     imagename=fluo_directory{i}(frameAuto).name;
     im=imread(imagename);
-    
-    for j=1:ncells
-        autoFluo=mean(im(pixels{j,frameAuto}));
-    end
     
     %now let's track intensity over time
     for t=1:T
@@ -88,162 +75,249 @@ for i=1:length(channels)
        
         %measure background level
         bglevel = measureBackground(imagename, p1, p2);
+        bgIntensity(t)=bglevel; 
         
-        for j=1:ncells
-     
-            %calculate intensity
-            intensity_temp(j,t)=mean(im(pixels{j,t}));
-            %subtract the background intensity
-            intensity_adj(j,t)=intensity_temp(j,t) - bglevel;
-            %subtract the autofluorescence
-            intensity_auto(j,t)=intensity_adj(j,t) - autoFluo;
-            %calculate the ratio
-            intensity_ratio(j,t)= intensity_auto(j,t)/bglevel;
+        for j=1:height(pxls)
             
+            if t <= frameAuto
+                %calculate autofluorescence
+                autoFluo(j, t)=mean(im(pxls{j,t}));
+            end
+   
+            %calculate intensity
+            intensity_temp(j,t)=mean(im(pxls{j,t}));
+            
+%            figure
+%            imshow(im)
+%            hold on
+%            
+%            if isempty(boun{j,t})~=1
+%            plot(boun{j,t}(:,1),boun{j,t}(:,2),'-w')
+%            pause(0.5)
+%            close
+%            else
+%                continue
+%            end
         end
         
     end
     
     intensity_temp(intensity_temp==0)=NaN;
+    autoFluo(autoFluo==0)=NaN;
     icell_temp{i}=intensity_temp;
-    
-    intensity_adj(intensity_adj==0)=NaN;
-    icell_adj{i}=intensity_adj;
-    
-    intensity_auto(intensity_auto==0)=NaN;
-    icell_auto{i}=intensity_auto;
-    
-    intensity_ratio(intensity_ratio==0)=NaN;
-    icell_ratio{i}=intensity_ratio;
     
 end
 
 for i=1:length(channels)
-    icellAvg_temp{i}=nanmean(icell_temp{i});
-    icellAvg_adj{i}=nanmean(icell_adj{i});
-    icellAvg_auto{i}=nanmean(icell_auto{i});
-    icellAvg_ratio{i}=nanmean(icell_ratio{i});
-    
+    icellAvg_temp{i}=nanmean(icell_temp{i});    
 end
+
+    
+%take the population average of the autofluorescence 
+autoFluo=mean(autoFluo);
+
+%now take the temporal average and the background
+%without dye
+autoFluo=mean(autoFluo, 'all');
+bgAdj = mean(bgIntensity(1, 1:frameAuto), 'all');
+
+%now subtract the background without dye from the rest of the background
+Iout = bgIntensity - bgAdj;
+
+if auto==1
+    
+    %subtract the autofluorescence from the intensity
+    Iin = icellAvg_temp{1} - autoFluo; 
+    
+else
+    
+    %just substract the background without dye
+    Iin = icellAvg_temp{1} - bgAdj;
+    
+end 
+
+%now, calculate the Iin/Iout ratio
+ratio = Iin ./ Iout;
 
 %cd([filename])
 %save([filename '/' basename '_647/' basename '_BTFSS'])
 
 elseif recrunch==1
-    load ([filename '/' basename '_647/' basename '_BTFSS'])
+    load ([filename '/' basename '_647/' basename '_BTfluo'])
 end
 
+%let's make a new directory to save plots and data
+mkdir([filename '/' basename '_647/' basename '_figures'])
+cd([filename '/' basename '_647/' basename '_figures'])
+    
 %Plot data
 %Let's just measure intensity data first
 figure, hold on, title('Intensity vs Time')
-for i=1:ncells
+for i=1:height(pxls)
     plot(time,icell_temp{1}(i,:))
 end
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_647/' basename,'_647itemp.png'])
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+saveas(gcf, [basename '_intensity.png'])
 
-figure, title('Avgerage Intensity vs Time')
+figure
 plot(time,icellAvg_temp{1},'-r')
+title('Avgerage Intensity vs Time')
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_647/' basename,'_647itempAvg.png'])
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+saveas(gcf, [basename,'_intensityAvg.png'])
 
-%Now let's measure adj intensity data and see if it's better
-figure, hold on
-for i=1:ncells
-    plot(time,icell_adj{1}(i,:))
-end
-title('Intensity (adjusted for background)')
+%Now let's plot average background fluorescence
+figure, hold on, title('Avg Background Intensity vs Time')
+plot(time,bgIntensity)
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_647/' basename,'_647iadj.png'])
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+hold off
 
-figure, title('Avgerage Intensity (adjusted for background)')
-plot(time,icellAvg_adj{1},'-r')
+%Now let's plot adjusted background fluorescence
+figure, hold on, title('Adj Background Intensity vs Time')
+plot(time,Iout)
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_647/' basename,'_647iadjAvg.png'])
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+hold off
 
-%Now let's measure adj intensity data - autoFluo and see if it's better
-figure, hold on 
-for i=1:ncells
-    plot(time,icell_auto{1}(i,:))
-end
-xlabel('Time (s)')
-ylabel('Intensity (A.U.)')
-title('Intensity (adjusted for autofluorescence and background)')
-fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_647/' basename,'_647auto.png'])
-
-figure, title('Avgerage Intensity (adjusted for autofluorescence and background)')
-plot(time,icellAvg_auto{1},'-r')
+%Now let's plot adjusted background fluorescence
+figure, hold on, title('Adj Intensity vs Time')
+plot(time,Iin)
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_647/' basename,'_647iautoAvg.png'])
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+hold off
 
-%Finally, let's plot the ratio
-figure, hold on
-for i=1:ncells
-    plot(time,icell_ratio{1}(i,:))
-end
-title('Intensity/Background Ratio')
+%Plot the Iin/Iout ratio over time
+figure, hold on, title('Ratio vs Time')
+plot(time,ratio)
 xlabel('Time (s)')
-ylabel('Intensity/Background (A.U.)')
+ylabel('Intensity (A.U.)')
 fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_647/' basename,'_647ratio.png'])
+xline(60, '--k', '*PBS + 5% detergent')
+xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+hold off
 
-figure, title('Avgerage Intensity/Background Ratio')
-plot(time,icellAvg_ratio{1},'-r')
-xlabel('Time (s)')
-ylabel('Intensity/Background (A.U.)')
-fig2pretty
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647')
-xline(330, '--k', '*PBS + 647 + FSS')
-xline(450, '--k', '*PBS + 647 + CF')
-xline(570, '--k', '*PBS + 647 + AF')
-saveas(gcf, [filename '/' basename '_647/' basename,'_647iratioAvg.png'])
+
+% %Now let's measure adj intensity data and see if it's better
+% figure, hold on
+% for i=1:height(pxls)
+%     plot(time,icell_adj{1}(i,:))
+% end
+% title('Intensity (adjusted for background)')
+% xlabel('Time (s)')
+% ylabel('Intensity (A.U.)')
+% fig2pretty
+% xline(60, '--k', '*PBS + 5% detergent')
+% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+% saveas(gcf, [filename '/' basename '_647/' basename,'_647iadj.png'])
+% 
+% figure
+% plot(time,icellAvg_adj{1},'-r')
+% title('Avgerage Intensity (adjusted for background)')
+% xlabel('Time (s)')
+% ylabel('Intensity (A.U.)')
+% fig2pretty
+% xline(60, '--k', '*PBS + 5% detergent')
+% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+% saveas(gcf, [filename '/' basename '_647/' basename,'_647iadjAvg.png'])
+% 
+% %Now let's measure adj intensity data - autoFluo and see if it's better
+% figure, hold on 
+% for i=1:height(pxls)
+%     plot(time,icell_auto{1}(i,:))
+% end
+% xlabel('Time (s)')
+% ylabel('Intensity (A.U.)')
+% title('Intensity (adjusted for autofluorescence and background)')
+% fig2pretty
+% xline(60, '--k', '*PBS + 5% detergent')
+% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+% saveas(gcf, [filename '/' basename '_647/' basename,'_647auto.png'])
+% 
+% figure
+% plot(time,icellAvg_auto{1},'-r')
+% title('Avgerage Intensity (adjusted for autofluorescence and background)')
+% xlabel('Time (s)')
+% ylabel('Intensity (A.U.)')
+% fig2pretty
+% xline(60, '--k', '*PBS + 5% detergent')
+% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+% saveas(gcf, [filename '/' basename '_647/' basename,'_647iautoAvg.png'])
+% 
+% %Finally, let's plot the ratio
+% figure, hold on
+% for i=1:height(pxls)
+%     plot(time,icell_ratio{1}(i,:))
+% end
+% title('Intensity/Background Ratio')
+% xlabel('Time (s)')
+% ylabel('Intensity/Background (A.U.)')
+% fig2pretty
+% xline(60, '--k', '*PBS + 5% detergent')
+% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+% saveas(gcf, [filename '/' basename '_647/' basename,'_647ratio.png'])
+% 
+% figure
+% plot(time,icellAvg_ratio{1},'-r')
+% title('Avgerage Intensity/Background Ratio')
+% xlabel('Time (s)')
+% ylabel('Intensity/Background (A.U.)')
+% fig2pretty
+% xline(60, '--k', '*PBS + 5% detergent')
+% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
+% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
+% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
+% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
+% saveas(gcf, [filename '/' basename '_647/' basename,'_647iratioAvg.png'])
 
 function [p1, p2]=getBackground(imagename)
         
