@@ -150,6 +150,9 @@ end
 mkdir([filename '/' basename '_647/' basename '_figures'])
 cd([filename '/' basename '_647/' basename '_figures'])
     
+%Save the data
+save([basename '_BTfluo'])
+
 %Plot data
 %Let's just measure intensity data first
 figure, hold on, title('Intensity vs Time')
@@ -180,7 +183,7 @@ xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
 saveas(gcf, [basename,'_intensityAvg.png'])
 
 %Now let's plot average background fluorescence
-figure, hold on, title('Avg Background Intensity vs Time')
+figure, hold on, title('Average Background Intensity vs Time')
 plot(time,bgIntensity)
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
@@ -191,9 +194,10 @@ xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
 xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
 xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
 hold off
+saveas(gcf, [basename,'_backgroundAvg.png'])
 
 %Now let's plot adjusted background fluorescence
-figure, hold on, title('Adj Background Intensity vs Time')
+figure, hold on, title('Average Background Intensity vs Time')
 plot(time,Iout)
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
@@ -204,9 +208,11 @@ xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
 xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
 xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
 hold off
+saveas(gcf, [basename,'_backgroundAdj.png'])
 
-%Now let's plot adjusted background fluorescence
-figure, hold on, title('Adj Intensity vs Time')
+
+%Now let's plot adjusted fluorescence
+figure, hold on, title('Intensity vs Time')
 plot(time,Iin)
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
@@ -217,108 +223,22 @@ xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
 xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
 xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
 hold off
+saveas(gcf, [basename,'_IntensityAdj.png'])
 
 %Plot the Iin/Iout ratio over time
-figure, hold on, title('Ratio vs Time')
-plot(time,ratio)
+figure, hold on
+plot(time(1,frameAuto+1:end),ratio(1,frameAuto+1:end))
 xlabel('Time (s)')
-ylabel('Intensity (A.U.)')
+ylabel('Intensity/Background')
 fig2pretty
-xline(60, '--k', '*PBS + 5% detergent')
-xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
 xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
 xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
 xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
 hold off
+saveas(gcf, [basename,'_ratio.png'])
 
 
-% %Now let's measure adj intensity data and see if it's better
-% figure, hold on
-% for i=1:height(pxls)
-%     plot(time,icell_adj{1}(i,:))
-% end
-% title('Intensity (adjusted for background)')
-% xlabel('Time (s)')
-% ylabel('Intensity (A.U.)')
-% fig2pretty
-% xline(60, '--k', '*PBS + 5% detergent')
-% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
-% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
-% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
-% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
-% saveas(gcf, [filename '/' basename '_647/' basename,'_647iadj.png'])
-% 
-% figure
-% plot(time,icellAvg_adj{1},'-r')
-% title('Avgerage Intensity (adjusted for background)')
-% xlabel('Time (s)')
-% ylabel('Intensity (A.U.)')
-% fig2pretty
-% xline(60, '--k', '*PBS + 5% detergent')
-% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
-% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
-% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
-% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
-% saveas(gcf, [filename '/' basename '_647/' basename,'_647iadjAvg.png'])
-% 
-% %Now let's measure adj intensity data - autoFluo and see if it's better
-% figure, hold on 
-% for i=1:height(pxls)
-%     plot(time,icell_auto{1}(i,:))
-% end
-% xlabel('Time (s)')
-% ylabel('Intensity (A.U.)')
-% title('Intensity (adjusted for autofluorescence and background)')
-% fig2pretty
-% xline(60, '--k', '*PBS + 5% detergent')
-% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
-% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
-% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
-% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
-% saveas(gcf, [filename '/' basename '_647/' basename,'_647auto.png'])
-% 
-% figure
-% plot(time,icellAvg_auto{1},'-r')
-% title('Avgerage Intensity (adjusted for autofluorescence and background)')
-% xlabel('Time (s)')
-% ylabel('Intensity (A.U.)')
-% fig2pretty
-% xline(60, '--k', '*PBS + 5% detergent')
-% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
-% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
-% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
-% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
-% saveas(gcf, [filename '/' basename '_647/' basename,'_647iautoAvg.png'])
-% 
-% %Finally, let's plot the ratio
-% figure, hold on
-% for i=1:height(pxls)
-%     plot(time,icell_ratio{1}(i,:))
-% end
-% title('Intensity/Background Ratio')
-% xlabel('Time (s)')
-% ylabel('Intensity/Background (A.U.)')
-% fig2pretty
-% xline(60, '--k', '*PBS + 5% detergent')
-% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
-% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
-% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
-% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
-% saveas(gcf, [filename '/' basename '_647/' basename,'_647ratio.png'])
-% 
-% figure
-% plot(time,icellAvg_ratio{1},'-r')
-% title('Avgerage Intensity/Background Ratio')
-% xlabel('Time (s)')
-% ylabel('Intensity/Background (A.U.)')
-% fig2pretty
-% xline(60, '--k', '*PBS + 5% detergent')
-% xline(114, '--k', '*PBS + 647 + FSS') %frame 19-30
-% xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-43
-% xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 44-56
-% xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 57-69
-% saveas(gcf, [filename '/' basename '_647/' basename,'_647iratioAvg.png'])
-
+%%%%%Functions
 function [p1, p2]=getBackground(imagename)
         
         %Load last image
