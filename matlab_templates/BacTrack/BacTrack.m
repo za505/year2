@@ -64,14 +64,14 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='03172021_Exp3_colony3';%Name of the image stack, used to save file.
-dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_aligned'];%Directory that the image stack is saved in.
-savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename '/' basename '_phase/' basename '_figures'];%Directory to save the output .mat file to.
+basename='03252021_Exp2_colony4';%Name of the image stack, used to save file.
+dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03252021_analysis/03252021_Exp2/' basename '/' basename '_phase/' basename '_erased'];%Directory that the image stack is saved in.
+savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03252021_analysis/03252021_Exp2/' basename '/' basename '_phase/' basename '_figures'];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
 lscale=0.08;%%Microns per pixel.
 tscale=10;%Frame rate.
 thresh=0;%For default, enter zero.
-IntThresh=11051;%Threshold used to enhance contrast. Default:35000
+IntThresh=12079;%Threshold used to enhance contrast. Default:35000
 dr=1;%Radius of dilation before watershed %default: 1
 sm=2;%Parameter used in edge detection %default: 2
 minL=2;%Minimum cell length default: 2
@@ -275,7 +275,7 @@ for t=1:T
     tstamp=[tstamp;ones(nc(t),1)*t];
     cellnum=[cellnum;(1:nc(t))'];
 
-if vis==1 & t < 6 | t > T-10
+if vis==1
    figure
    imshow(im)
    hold on
@@ -283,7 +283,7 @@ if vis==1 & t < 6 | t > T-10
        plot(boun{k,t}(:,1),boun{k,t}(:,2),'-r')
    end
     
-  pause
+  pause(0.3)
   close all
 end
     toc
@@ -540,10 +540,10 @@ for i=1:ncells
 end
 xlabel('Time (s)')
 ylabel('Length (\mum)')
-xline(0, '--k', 'LB + 647')
-xline(154, '--k', '*PBS + 5% detergent')
-xline(274, '--k', '*PBS + 647')
-xline(394, '--k', '*PBS + 647 + 20 mM NaCl')
+xline(200, '--k', 'PBS + 647') %frame 20-32
+xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
+xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
+xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
 fig2pretty
 saveas(gcf,[basename,'_lTraces.png'])
 
@@ -556,10 +556,10 @@ plot(time,wav,'-r','LineWidth',2)
 xlabel('Time (s)')
 ylabel('Width (/mum)')
 fig2pretty
-xline(0, '--k', 'LB + 647')
-xline(154, '--k', '*PBS + 5% detergent')
-xline(274, '--k', '*PBS + 647')
-xline(394, '--k', '*PBS + 647 + 20 mM NaCl')
+xline(200, '--k', 'PBS + 647') %frame 20-32
+xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
+xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
+xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
 saveas(gcf, [basename,'_wTraces.png'])
 
 % figure(4), title('Circumferential Strain vs. Time')
@@ -582,10 +582,10 @@ end
 plot(tmid,vav,'-r')
 xlabel('Time (s)')
 ylabel('Elongation Rate (s^{-1})')
-xline(0, '--k', 'LB + 647')
-xline(154, '--k', '*PBS + 5% detergent')
-xline(274, '--k', '*PBS + 647')
-xline(394, '--k', '*PBS + 647 + 20 mM NaCl')
+xline(200, '--k', 'PBS + 647') %frame 20-32
+xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
+xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
+xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
 fig2pretty
 saveas(gcf, [basename,'_eTraces.png'])
 
@@ -596,10 +596,10 @@ plot(tmid,vav*3600,'-r')
 xlabel('Time (s)')
 ylabel('Elongation (hr^{-1})')
 yline(2, '--b')
-xline(0, '--k', 'LB + 647')
-xline(154, '--k', '*PBS + 5% detergent')
-xline(274, '--k', '*PBS + 647')
-xline(394, '--k', '*PBS + 647 + 20 mM NaCl')
+xline(200, '--k', 'PBS + 647') %frame 20-32
+xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
+xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
+xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
 fig2pretty
 saveas(gcf, [basename,'_ET.png'])
 save([basename '_BTphase'])
