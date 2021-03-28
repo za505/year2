@@ -20,12 +20,12 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename=["03172021_Exp2_colony1", "03172021_Exp2_colony2",  "03172021_Exp2_colony3"];%Name of the image stack, used to save file.
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp2'];
-channel=['_FSS'];
+basename=["03172021_Exp1_colony1", "03172021_Exp1_colony2"];%Name of the image stack, used to save file.
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp1'];
+channel=['_647'];
 recrunch=0;
 B=length(basename);%number of main directories to analyze
-mgGradient=0;
+mgGradient=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if recrunch==0
     
@@ -115,11 +115,11 @@ ylim([0 Inf])
 ciplot(avgIin - stdIin, avgIin + stdIin, time, [0.75 0.75 1])
 %plot(time, exp_popavg)
 plot(time, avgIin, '-r')
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647') %frame 22-32
-xline(330, '--k', '*PBS + 647 + FSS') %frame 33-44
-xline(450, '--k', '*PBS + 647 + CF') %frame 45-56
-xline(570, '--k', '*PBS + 647 + AF') %frame 57-61
+xline(60, '--k', '*PBS + 5% detergent');
+xline(114, '--k', '*PBS + 647 + FSS'); %frame 19-30
+xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+'); %frame 31-43
+xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+'); %frame 44-56
+xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+'); %frame 57-69
 saveas(gcf, ['avgIin' channel '.png'])
 
 %let's plot the average ratio too
@@ -131,11 +131,11 @@ ylim([0 Inf])
 fig2pretty
 ciplot(avgRatio - stdRatio, avgRatio + stdRatio, time, [0.75 0.75 1])
 plot(time, avgRatio, '-r') 
-%xline(90, '--k', '*PBS + 5% detergent')
-%xline(210, '--k', '*PBS + 647') %frame 22-32
-xline(330, '--k', '*PBS + 647 + FSS') %frame 33-44
-xline(450, '--k', '*PBS + 647 + CF') %frame 45-56
-xline(570, '--k', '*PBS + 647 + AF') %frame 57-61
+xline(60, '--k', '*PBS + 5% detergent');
+xline(114, '--k', '*PBS + 647 + FSS'); %frame 19-30
+xline(234, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+'); %frame 31-43
+xline(354, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+'); %frame 44-56
+xline(474, '--k', '*PBS + 647 + FSS + 20 mM Mg2+'); %frame 57-69
 saveas(gcf, ['avgRatio' channel '.png'])
 
 if mgGradient==1
