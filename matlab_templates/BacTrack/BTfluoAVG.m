@@ -20,9 +20,9 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename=["03252021_Exp2_colony1", "03252021_Exp2_colony2", "03252021_Exp2_colony3", "03252021_Exp2_colony4"];%Name of the image stack, used to save file.
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03252021_analysis/03252021_Exp2'];
-channel=['_647'];
+basename=["03262021_Exp1_colony1", "03262021_Exp1_colony2", "03262021_Exp1_colony3", "03262021_Exp1_colony4"];%Name of the image stack, used to save file.
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03262021_analysis'];
+channel=['_FSS'];
 recrunch=0;
 B=length(basename);%number of main directories to analyze
 mgGradient=1;
@@ -143,7 +143,7 @@ if mgGradient==1
     xlabel('Mg^{2+} (mM)')
     ylabel('Intensity/Background')
     yline(1, '--b')
-    xlim([-2 21])
+    xlim([-2 13])
     xticks(mgRange)
     fig2pretty
     scatter(mgConc, avgRatio, 'r') 
