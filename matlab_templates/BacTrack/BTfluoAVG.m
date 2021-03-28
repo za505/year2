@@ -20,12 +20,12 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename=["03172021_Exp3_colony2", "03172021_Exp3_colony3"];%Name of the image stack, used to save file.
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp3'];
+basename=["03252021_Exp2_colony1", "03252021_Exp2_colony2", "03252021_Exp2_colony3", "03252021_Exp2_colony4"];%Name of the image stack, used to save file.
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03252021_analysis/03252021_Exp2'];
 channel=['_647'];
 recrunch=0;
 B=length(basename);%number of main directories to analyze
-mgGradient=0;
+mgGradient=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if recrunch==0
     
@@ -115,10 +115,10 @@ ylim([0 Inf])
 ciplot(avgIin - stdIin, avgIin + stdIin, time, [0.75 0.75 1])
 %plot(time, exp_popavg)
 plot(time, avgIin, '-r')
-xline(0, '--k', 'LB + 647') %frame 1-16
-xline(170, '--k', '*PBS + 5% detergent') %frame 17-28
-xline(290, '--k', '*PBS + 647') %frame 29-41
-xline(420, '--k', '*PBS + 647 + 20 mM NaCl') %frame 42+
+xline(200, '--k', 'PBS + 647') %frame 20-32
+xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
+xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
+xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
 saveas(gcf, ['avgIin' channel '.png'])
 
 %let's plot the average ratio too
@@ -130,10 +130,10 @@ ylim([0 Inf])
 fig2pretty
 ciplot(avgRatio - stdRatio, avgRatio + stdRatio, time, [0.75 0.75 1])
 plot(time, avgRatio, '-r') 
-xline(0, '--k', 'LB + 647') %frame 1-16
-xline(170, '--k', '*PBS + 5% detergent') %frame 17-28
-xline(290, '--k', '*PBS + 647') %frame 29-41
-xline(420, '--k', '*PBS + 647 + 20 mM NaCl') %frame 42+
+xline(200, '--k', 'PBS + 647') %frame 20-32
+xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
+xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
+xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
 saveas(gcf, ['avgRatio' channel '.png'])
 
 if mgGradient==1
