@@ -21,14 +21,14 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03262021_Exp1_colony3';
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03262021_analysis/' basename];
+basename='03172021_Exp2_colony1';
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp2/' basename];
 channel=[filename '/' basename '_FSS/' basename '_aligned'];
 midSwitch=0; %0=all the frames before frameAuto have no dye
 frameInitial=1; %this is the FIRST frame that has no dye
-frameAuto=17; %this is the LAST frame that has no dye
-frameBg=23; %this is the frame that you'll pick the background area from
-mg=1; %is there a Mg gradient?
+frameAuto=32; %this is the LAST frame that has no dye
+frameBg=35; %this is the frame that you'll pick the background area from
+mg=0; %is there a Mg gradient?
 mgRange=[0 6 9 12]; %which concentrations?
 mgConc=[repelem(0,frameAuto+12), repelem(6,13), repelem(9,13), repelem(12,9)]; 
 recrunch=0; %recrunch=1, just redo the plots, don't recalculate any values
@@ -148,10 +148,11 @@ xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
 ylim([0 Inf])
-xline(170, '--k', 'PBS + FSS') %frame 18-29
-xline(300, '--k', 'PBS + FSS + 6 mM Mg') %frame 30-42
-xline(430, '--k', 'PBS + FSS + 9 mM Mg') %frame 43-55
-xline(560, '--k', 'PBS + FSS + 12 mM Mg') %frame 56-64
+xline(90, '--k', '*PBS + 5% detergent')
+xline(210, '--k', '*PBS + 647') %frame 22-32
+xline(330, '--k', '*PBS + 647 + FSS') %frame 33-44
+xline(450, '--k', '*PBS + 647 + CF') %frame 45-56
+xline(570, '--k', '*PBS + 647 + AF') %frame 57-61
 saveas(gcf, [basename '_intensity.png'])
 
 %now population average cell intensity
@@ -163,10 +164,11 @@ xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
 ylim([0 Inf])
-xline(170, '--k', 'PBS + FSS') %frame 18-29
-xline(300, '--k', 'PBS + FSS + 6 mM Mg') %frame 30-42
-xline(430, '--k', 'PBS + FSS + 9 mM Mg') %frame 43-55
-xline(560, '--k', 'PBS + FSS + 12 mM Mg') %frame 56-64
+xline(90, '--k', '*PBS + 5% detergent')
+xline(210, '--k', '*PBS + 647') %frame 22-32
+xline(330, '--k', '*PBS + 647 + FSS') %frame 33-44
+xline(450, '--k', '*PBS + 647 + CF') %frame 45-56
+xline(570, '--k', '*PBS + 647 + AF') %frame 57-61
 saveas(gcf, [basename,'_intensityAvg.png'])
 
 %Plot average background fluorescence
@@ -177,10 +179,11 @@ xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
 ylim([0 Inf])
-xline(170, '--k', 'PBS + FSS') %frame 18-29
-xline(300, '--k', 'PBS + FSS + 6 mM Mg') %frame 30-42
-xline(430, '--k', 'PBS + FSS + 9 mM Mg') %frame 43-55
-xline(560, '--k', 'PBS + FSS + 12 mM Mg') %frame 56-64
+xline(90, '--k', '*PBS + 5% detergent')
+xline(210, '--k', '*PBS + 647') %frame 22-32
+xline(330, '--k', '*PBS + 647 + FSS') %frame 33-44
+xline(450, '--k', '*PBS + 647 + CF') %frame 45-56
+xline(570, '--k', '*PBS + 647 + AF') %frame 57-61
 hold off
 saveas(gcf, [basename,'_background.png'])
 
@@ -193,26 +196,30 @@ xlabel('Time (s)')
 ylabel('Intensity/Background')
 fig2pretty 
 ylim([0 Inf])
-xline(170, '--k', 'PBS + FSS') %frame 18-29
-xline(300, '--k', 'PBS + FSS + 6 mM Mg') %frame 30-42
-xline(430, '--k', 'PBS + FSS + 9 mM Mg') %frame 43-55
-xline(560, '--k', 'PBS + FSS + 12 mM Mg') %frame 56-64
+yline(1, '--k')
+%xline(90, '--k', '*PBS + 5% detergent')
+%xline(210, '--k', '*PBS + 647') %frame 22-32
+xline(330, '--k', '*PBS + 647 + FSS') %frame 33-44
+xline(450, '--k', '*PBS + 647 + CF') %frame 45-56
+xline(570, '--k', '*PBS + 647 + AF') %frame 57-61
 hold off
 saveas(gcf, [basename,'_ratioTime.png'])
 
-%Plot the Iin/Iout ratio over [Mg2+]
-figure, hold on
-title('Intensity/Background vs Mg^{2+}')
-plot(mgConc,avgRatio)
-xlabel('Mg^{2+} concentration (mM)')
-ylabel('Intensity/Background')
-yline(1, '--k')
-xlim([-2 13])
-ylim([0 Inf])
-xticks(mgRange)
-fig2pretty 
-hold off
-saveas(gcf, [basename,'_ratioMg.png'])
+if mg==1
+    %Plot the Iin/Iout ratio over [Mg2+]
+    figure, hold on
+    title('Intensity/Background vs Mg^{2+}')
+    plot(mgConc,avgRatio)
+    xlabel('Mg^{2+} concentration (mM)')
+    ylabel('Intensity/Background')
+    yline(1, '--k')
+    xlim([-2 13])
+    ylim([0 Inf])
+    xticks(mgRange)
+    fig2pretty 
+    hold off
+    saveas(gcf, [basename,'_ratioMg.png'])
+end 
 
 %%%%%Functions
 function [p1, p2]=getBackground(imagename)
