@@ -20,8 +20,8 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename=["03172021_Exp2_colony1", "03172021_Exp2_colony2", "03172021_Exp2_colony3"];%Name of the image stack, used to save file.
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp2'];
+basename=["03172021_Exp3_colony2", "03172021_Exp3_colony3"];%Name of the image stack, used to save file.
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp3'];
 channel=['_647'];
 recrunch=0;
 B=length(basename);%number of main directories to analyze
@@ -115,11 +115,10 @@ ylim([0 Inf])
 ciplot(avgIin - stdIin, avgIin + stdIin, time, [0.75 0.75 1])
 %plot(time, exp_popavg)
 plot(time, avgIin, '-r')
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647') %frame 22-32
-xline(330, '--k', '*PBS + 647 + FSS') %frame 33-44
-xline(450, '--k', '*PBS + 647 + CF') %frame 45-56
-xline(570, '--k', '*PBS + 647 + AF') %frame 57-61
+xline(0, '--k', 'LB + 647') %frame 1-16
+xline(170, '--k', '*PBS + 5% detergent') %frame 17-28
+xline(290, '--k', '*PBS + 647') %frame 29-41
+xline(420, '--k', '*PBS + 647 + 20 mM NaCl') %frame 42+
 saveas(gcf, ['avgIin' channel '.png'])
 
 %let's plot the average ratio too
@@ -131,11 +130,10 @@ ylim([0 Inf])
 fig2pretty
 ciplot(avgRatio - stdRatio, avgRatio + stdRatio, time, [0.75 0.75 1])
 plot(time, avgRatio, '-r') 
-xline(90, '--k', '*PBS + 5% detergent')
-xline(210, '--k', '*PBS + 647') %frame 22-32
-xline(330, '--k', '*PBS + 647 + FSS') %frame 33-44
-xline(450, '--k', '*PBS + 647 + CF') %frame 45-56
-xline(570, '--k', '*PBS + 647 + AF') %frame 57-61
+xline(0, '--k', 'LB + 647') %frame 1-16
+xline(170, '--k', '*PBS + 5% detergent') %frame 17-28
+xline(290, '--k', '*PBS + 647') %frame 29-41
+xline(420, '--k', '*PBS + 647 + 20 mM NaCl') %frame 42+
 saveas(gcf, ['avgRatio' channel '.png'])
 
 if mgGradient==1
