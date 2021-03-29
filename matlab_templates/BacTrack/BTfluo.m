@@ -21,8 +21,8 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03262021_Exp1_colony4';
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03262021_analysis/' basename];
+basename='03172021_Exp1_colony1';
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp1/' basename];
 channel=[filename '/' basename '_FSS/' basename '_aligned'];
 reeval=1; %need to actually re-calculate stuff
 
@@ -30,6 +30,11 @@ if reeval==1
     
     load ([filename '/' basename '_FSS/' basename '_figures/' basename '_BTfluo'])
     recrunch=0;
+    mgRange=[0 6.66 12.33 20]; %which concentrations?
+    mgConc(1, 1:30)=0;
+    mgConc(1, 31:42)=6.66;
+    mgConc(1, 43:54)=12.33;
+    mgConc(1, 55:61)=20;
     
 else
     midSwitch=0; %0=all the frames before frameAuto have no dye
@@ -126,8 +131,8 @@ Iout = bgIntensity - bgAdj;
 Iin = cellIntensity - cellAdj;
 
 %calculate average intensity and standard deviation
-avgIntensity = mean(cellIntensity, 'omitnan');
-stdIntensity = std(cellIntensity, 'omitnan');
+avgIntensity = mean(Iin, 'omitnan');
+stdIntensity = std(Iin, 'omitnan');
 
 %now, calculate the Iin/Iout ratio
 ratio = Iin ./ Iout;
@@ -135,6 +140,25 @@ ratio(:,frameInitial:frameAuto)=NaN;
 
 avgRatio = mean(ratio, 'omitnan');
 stdRatio = std(ratio, 'omitnan');
+
+%now, calculate the Iin/Iout ratio as a function of Mg2+ concentration
+avgMg = [];
+stdMg = [];
+
+avgMg(:,1) = mean(ratio(:, 19:30), 2, 'omitnan');
+stdMg(1) = std(avgMg(:, 1), 'omitnan');
+
+avgMg(:,2) = mean(ratio(:, 31:42), 2, 'omitnan');
+stdMg(2) = std(avgMg(:, 2), 'omitnan');
+
+avgMg(:,3) = mean(ratio(:, 43:54), 2, 'omitnan');
+stdMg(3) = std(avgMg(:, 3), 'omitnan');
+
+avgMg(:,4) = mean(ratio(:, 55:61), 2, 'omitnan');
+stdMg(4) = std(avgMg(:, 4), 'omitnan');
+
+avgMg = mean(avgMg, 'omitnan');
+
 
 elseif recrunch==1
     load ([filename '/' basename '_FSS/' basename '_figures/' basename '_BTfluo'])
@@ -155,11 +179,12 @@ end
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-ylim([0 Inf])
-xline(170, '--k', 'PBS + FSS') %frame 18-29
-xline(300, '--k', 'PBS + FSS + 6 mM Mg') %frame 30-42
-xline(430, '--k', 'PBS + FSS + 9 mM Mg') %frame 43-55
-xline(560, '--k', 'PBS + FSS + 12 mM Mg') %frame 56-64
+ylim([-1 Inf])
+xline(60, '--k', '*PBS + 5% detergent') %frame 1-18
+xline(190, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(310, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-42
+xline(430, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 43-54
+xline(550, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 55-61
 saveas(gcf, [basename '_intensity.png'])
 
 %now population average cell intensity
@@ -170,11 +195,12 @@ title('Average Intensity vs Time')
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-ylim([0 Inf])
-xline(170, '--k', 'PBS + FSS') %frame 18-29
-xline(300, '--k', 'PBS + FSS + 6 mM Mg') %frame 30-42
-xline(430, '--k', 'PBS + FSS + 9 mM Mg') %frame 43-55
-xline(560, '--k', 'PBS + FSS + 12 mM Mg') %frame 56-64
+ylim([-1 Inf])
+xline(60, '--k', '*PBS + 5% detergent') %frame 1-18
+xline(190, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(310, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-42
+xline(430, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 43-54
+xline(550, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 55-61
 saveas(gcf, [basename,'_intensityAvg.png'])
 
 %Plot average background fluorescence
@@ -184,11 +210,12 @@ plot(time,Iout)
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-ylim([0 Inf])
-xline(170, '--k', 'PBS + FSS') %frame 18-29
-xline(300, '--k', 'PBS + FSS + 6 mM Mg') %frame 30-42
-xline(430, '--k', 'PBS + FSS + 9 mM Mg') %frame 43-55
-xline(560, '--k', 'PBS + FSS + 12 mM Mg') %frame 56-64
+ylim([-1 Inf])
+xline(60, '--k', '*PBS + 5% detergent') %frame 1-18
+xline(190, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(310, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-42
+xline(430, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 43-54
+xline(550, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 55-61
 hold off
 saveas(gcf, [basename,'_background.png'])
 
@@ -201,10 +228,11 @@ xlabel('Time (s)')
 ylabel('Intensity/Background')
 fig2pretty 
 ylim([0 Inf])
-xline(170, '--k', 'PBS + FSS') %frame 18-29
-xline(300, '--k', 'PBS + FSS + 6 mM Mg') %frame 30-42
-xline(430, '--k', 'PBS + FSS + 9 mM Mg') %frame 43-55
-xline(560, '--k', 'PBS + FSS + 12 mM Mg') %frame 56-64
+xline(60, '--k', '*PBS + 5% detergent') %frame 1-18
+xline(190, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(310, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-42
+xline(430, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 43-54
+xline(550, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 55-61
 hold off
 saveas(gcf, [basename,'_ratioTime.png'])
 
@@ -212,12 +240,12 @@ if mg==1
     %Plot the Iin/Iout ratio over [Mg2+]
     figure, hold on
     title('Intensity/Background vs Mg^{2+}')
-    scatter(mgConc,avgRatio)
+    errorbar(mgRange,avgMg,stdMg, 'both', 'o')
     xlabel('Mg^{2+} concentration (mM)')
     ylabel('Intensity/Background')
     yline(1, '--k')
-    xlim([-2 13])
-    ylim([0 Inf])
+    xlim([-2 22])
+    ylim([-1 Inf])
     xticks(mgRange)
     fig2pretty 
     hold off
