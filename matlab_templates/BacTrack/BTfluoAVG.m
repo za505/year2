@@ -20,8 +20,8 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename=["03262021_Exp1_colony1", "03262021_Exp1_colony2", "03262021_Exp1_colony3", "03262021_Exp1_colony4"];%Name of the image stack, used to save file.
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03262021_analysis'];
+basename=["03172021_Exp1_colony1", "03172021_Exp1_colony2"];%Name of the image stack, used to save file.
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp1'];
 channel=['_FSS'];
 recrunch=0;
 B=length(basename);%number of main directories to analyze
@@ -38,7 +38,6 @@ time = cell2mat(struct2cell(load([filelist{1}.name],'time')));
 frameAuto = cell2mat(struct2cell(load([filelist{1}.name],'frameAuto')));
 
 if mgGradient==1
-    mgConc = cell2mat(struct2cell(load([filelist{1}.name],'mgConc')));
     mgRange = cell2mat(struct2cell(load([filelist{1}.name],'mgRange')));
 end
 
@@ -88,12 +87,34 @@ end
 avgIin = mean(Iin, 'omitnan');
 stdIin = std(Iin, 'omitnan');
 
+%let's calulcate the population average background based on all the cells
+avgIout = mean(Iout, 'omitnan');
+stdIout = std(Iout, 'omitnan');
+
 %remove ratios from frames without dye
 ratio(:,1:frameAuto)=NaN;
 
 %let's calulcate the population average based on all the cells
 avgRatio = mean(ratio, 'omitnan');
 stdRatio = std(ratio, 'omitnan');
+
+%now, calculate the Iin/Iout ratio as a function of Mg2+ concentration
+avgMg = [];
+stdMg = [];
+
+avgMg(:,1) = mean(ratio(:, 19:30), 2, 'omitnan');
+stdMg(1) = std(avgMg(:, 1), 'omitnan');
+
+avgMg(:,2) = mean(ratio(:, 31:42), 2, 'omitnan');
+stdMg(2) = std(avgMg(:, 2), 'omitnan');
+
+avgMg(:,3) = mean(ratio(:, 43:54), 2, 'omitnan');
+stdMg(3) = std(avgMg(:, 3), 'omitnan');
+
+avgMg(:,4) = mean(ratio(:, 55:61), 2, 'omitnan');
+stdMg(4) = std(avgMg(:, 4), 'omitnan');
+
+avgMg = mean(avgMg, 'omitnan');
 
 %change directory
 cd(filename);
@@ -111,41 +132,61 @@ title('Population Average Intensity vs Time')
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-ylim([0 Inf])
+ylim([-1 Inf])
 ciplot(avgIin - stdIin, avgIin + stdIin, time, [0.75 0.75 1])
 %plot(time, exp_popavg)
 plot(time, avgIin, '-r')
-xline(200, '--k', 'PBS + 647') %frame 20-32
-xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
-xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
-xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
+xline(60, '--k', '*PBS + 5% detergent') %frame 1-18
+xline(190, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(310, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-42
+xline(430, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 43-54
+xline(550, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 55-61
 saveas(gcf, ['avgIin' channel '.png'])
+
+%let's plot the population avereage intensity
+figure, hold on
+title('Average Background Intensity vs Time')
+xlabel('Time (s)')
+ylabel('Intensity (A.U.)')
+fig2pretty
+ylim([-1 Inf])
+ciplot(avgIout - stdIout, avgIout + stdIout, time, [0.75 0.75 1])
+%plot(time, exp_popavg)
+plot(time, avgIout, '-r')
+xline(60, '--k', '*PBS + 5% detergent') %frame 1-18
+xline(190, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(310, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-42
+xline(430, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 43-54
+xline(550, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 55-61
+saveas(gcf, ['avgIout' channel '.png'])
 
 %let's plot the average ratio too
 figure, hold on
 title('Intensity/Background vs Time')
 xlabel('Time (s)')
 ylabel('Intensity/Background')
-ylim([0 Inf])
+ylim([-1 Inf])
 fig2pretty
 ciplot(avgRatio - stdRatio, avgRatio + stdRatio, time, [0.75 0.75 1])
 plot(time, avgRatio, '-r') 
-xline(200, '--k', 'PBS + 647') %frame 20-32
-xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
-xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
-xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
+xline(60, '--k', '*PBS + 5% detergent') %frame 1-18
+xline(190, '--k', '*PBS + 647 + FSS') %frame 19-30
+xline(310, '--k', '*PBS + 647 + FSS + 6.66 mM Mg2+') %frame 31-42
+xline(430, '--k', '*PBS + 647 + FSS + 12.33 mM Mg2+') %frame 43-54
+xline(550, '--k', '*PBS + 647 + FSS + 20 mM Mg2+') %frame 55-61
 saveas(gcf, ['avgRatio' channel '.png'])
 
 if mgGradient==1
     %let's plot the average ratio vs Mg2+ 
     figure, hold on
     title('Average Intensity/Background vs Mg^{2+} Concentration')
-    xlabel('Mg^{2+} (mM)')
+    errorbar(mgRange,avgMg,stdMg, 'both', 'o')
+    xlabel('Mg^{2+} concentration (mM)')
     ylabel('Intensity/Background')
-    yline(1, '--b')
-    xlim([-2 13])
+    yline(1, '--k')
+    xlim([-2 22])
+    ylim([0 Inf])
     xticks(mgRange)
-    fig2pretty
-    scatter(mgConc, avgRatio, 'r') 
-    saveas(gcf, ['avgRatio_mgConc' channel '.png'])
+    fig2pretty 
+    saveas(gcf, ['avgMg' channel '.png'])
 end 

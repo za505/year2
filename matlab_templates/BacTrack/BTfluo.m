@@ -21,14 +21,14 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03172021_Exp1_colony1';
+basename='03172021_Exp1_colony3';
 filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/03172021_Exp1/' basename];
-channel=[filename '/' basename '_FSS/' basename '_aligned'];
+channel=[filename '/' basename '_647/' basename '_aligned'];
 reeval=1; %need to actually re-calculate stuff
 
 if reeval==1
     
-    load ([filename '/' basename '_FSS/' basename '_figures/' basename '_BTfluo'])
+    load ([filename '/' basename '_647/' basename '_figures/' basename '_BTfluo'])
     recrunch=0;
     mgRange=[0 6.66 12.33 20]; %which concentrations?
     mgConc(1, 1:30)=0;
@@ -161,11 +161,11 @@ avgMg = mean(avgMg, 'omitnan');
 
 
 elseif recrunch==1
-    load ([filename '/' basename '_FSS/' basename '_figures/' basename '_BTfluo'])
+    load ([filename '/' basename '_647/' basename '_figures/' basename '_BTfluo'])
 end
 
 % %let's change folders to save the plots and variables
-cd([filename '/' basename '_FSS/' basename '_figures'])
+cd([filename '/' basename '_647/' basename '_figures'])
     
 %save the variables
 save([basename '_BTfluo'])
@@ -245,7 +245,7 @@ if mg==1
     ylabel('Intensity/Background')
     yline(1, '--k')
     xlim([-2 22])
-    ylim([-1 Inf])
+    ylim([0 Inf])
     xticks(mgRange)
     fig2pretty 
     hold off
