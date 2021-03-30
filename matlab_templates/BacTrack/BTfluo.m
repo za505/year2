@@ -21,7 +21,7 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03292021_Exp1_colony1';
+basename='03292021_Exp1_colony2';
 filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03292021_analysis/03292021_Exp1/' basename];
 channel=[filename '/' basename '_FSS/' basename '_aligned'];
 reeval=0; %need to actually re-calculate stuff
@@ -114,7 +114,8 @@ for t=1:T
 end
     
 %cellIntensity(cellIntensity==0)=NaN;
-%cellAuto(cellAuto==0)=NaN;
+cellAuto(cellAuto==0)=NaN;
+bgAuto(bgAuto==0)=NaN;
         
 %take the population average of the autofluorescence 
 cellAuto=mean(cellAuto, 'omitnan');
