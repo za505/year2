@@ -21,14 +21,14 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %USER INPUT
-basename='03292021_Exp1_colony2';
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03292021_analysis/03292021_Exp1/' basename];
-channel=[filename '/' basename '_FSS/' basename '_aligned'];
+basename='03292021_Exp2_colony1';
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03292021_analysis/03292021_Exp2/' basename];
+channel=[filename '/' basename '_647/' basename '_aligned'];
 reeval=0; %need to actually re-calculate stuff
 
 if reeval==1
     
-    %load ([filename '/' basename '_FSS/' basename '_figures/' basename '_BTfluo'])
+    %load ([filename '/' basename '_647/' basename '_figures/' basename '_BTfluo'])
     recrunch=0;
 %     mgRange=[0 6 9 12]; %which concentrations?
 %     mgConc(1, 1:28)=0;
@@ -39,8 +39,8 @@ if reeval==1
 else
     midSwitch=0; %0=all the frames before frameAuto have no dye
     frameInitial=1; %this is the FIRST frame that has no dye
-    frameAuto=16; %this is the LAST frame that has no dye
-    frameBg=20; %this is the frame that you'll pick the background area from
+    frameAuto=20; %this is the LAST frame that has no dye
+    frameBg=23; %this is the frame that you'll pick the background area from
     mg=0; %is there a Mg gradient?
     mgRange=[0 6.66 12.33 20]; %which concentrations?
     %mgConc=[repelem(0,frameAuto+12), repelem(6,13), repelem(9,13), repelem(12,9)]; 
@@ -113,9 +113,7 @@ for t=1:T
 
 end
     
-%cellIntensity(cellIntensity==0)=NaN;
-cellAuto(cellAuto==0)=NaN;
-bgAuto(bgAuto==0)=NaN;
+%cellAuto(cellAuto==0)=NaN;
         
 %take the population average of the autofluorescence 
 cellAuto=mean(cellAuto, 'omitnan');
@@ -127,9 +125,11 @@ bgAdj = mean(bgAuto, 'all', 'omitnan');
 
 %now subtract the background autofluorescence from background intensity
 Iout = bgIntensity - bgAdj;
+Iout(Iout<=0)=0;
 
 %now subtract the background autofluorescence from background intensity
 Iin = cellIntensity - cellAdj;
+Iin(Iin<=0)=0;
 
 %calculate average intensity and standard deviation
 avgIntensity = mean(Iin, 'omitnan');
@@ -165,11 +165,11 @@ if mg==1
 end
 
 elseif recrunch==1
-    load ([filename '/' basename '_FSS/' basename '_figures/' basename '_BTfluo'])
+    load ([filename '/' basename '_647/' basename '_figures/' basename '_BTfluo'])
 end
 
 % %let's change folders to save the plots and variables
-cd([filename '/' basename '_FSS/' basename '_figures'])
+cd([filename '/' basename '_647/' basename '_figures'])
     
 %save the variables
 save([basename '_BTfluo'])
@@ -183,10 +183,7 @@ end
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(170, '--k', '*PBS + FSS') %frame 17-28 
-xline(290, '--k', '*PBS + FSS + 6.66 mM Mg^{2+}') %frame 29-40 
-xline(410, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 41-51 
-xline(520, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 52-66 
+ 
 ylim([-3 Inf])
 saveas(gcf, [basename '_intensity.png'])
 
@@ -198,10 +195,7 @@ title('Average Intensity vs Time')
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(170, '--k', '*PBS + FSS') %frame 17-28 
-xline(290, '--k', '*PBS + FSS + 6.66 mM Mg^{2+}') %frame 29-40 
-xline(410, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 41-51 
-xline(520, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 52-66   
+   
 ylim([-3 Inf])
 saveas(gcf, [basename,'_intensityAvg.png'])
 
@@ -212,10 +206,7 @@ plot(time,Iout)
 xlabel('Time (s)')
 ylabel('Intensity (A.U.)')
 fig2pretty
-xline(170, '--k', '*PBS + FSS') %frame 17-28 
-xline(290, '--k', '*PBS + FSS + 6.66 mM Mg^{2+}') %frame 29-40 
-xline(410, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 41-51 
-xline(520, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 52-66 
+
 ylim([-3 Inf])
 hold off
 saveas(gcf, [basename,'_background.png'])
@@ -228,10 +219,7 @@ plot(time,avgRatio)
 xlabel('Time (s)')
 ylabel('Intensity/Background')
 fig2pretty 
-xline(170, '--k', '*PBS + FSS') %frame 17-28 
-xline(290, '--k', '*PBS + FSS + 6.66 mM Mg^{2+}') %frame 29-40 
-xline(410, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 41-51 
-xline(520, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 52-66 
+
 ylim([0 Inf])
 hold off
 saveas(gcf, [basename,'_ratioTime.png'])
