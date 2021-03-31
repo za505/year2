@@ -24,8 +24,7 @@ nSwitches=4;
 
 %and this is our range for the Mg2+ gradient
 mgRange=[0 6.66 12 12.33 15 20];
-ratio=[];
-lcell=[];
+
 %%%%%%%%%%%%%%%%
 %% 647
 
@@ -41,11 +40,16 @@ for f=1:length(filename)
     experiment(f).mgRange=experiment(f).BTfluoAVG.mgRange;
   
     index=experiment(f).index;
-    experiment(f).ratio{1}=experiment(f).BTfluoAVG.ratio(:, index(1):index(2));
-    experiment(f).ratio{2}=experiment(f).BTfluoAVG.ratio(:, index(2)+1:index(3));
-    experiment(f).ratio{3}=experiment(f).BTfluoAVG.ratio(:, index(3)+1:index(4));
-    experiment(f).ratio{4}=experiment(f).BTfluoAVG.ratio(:, index(4)+1:index(5));
+    experiment(f).ratio{1}=mean(experiment(f).BTfluoAVG.ratio(:, index(1):index(2)), 2, 'omitnan');
+    experiment(f).ratio{2}=mean(experiment(f).BTfluoAVG.ratio(:, index(2)+1:index(3)), 2, 'omitnan');
+    experiment(f).ratio{3}=mean(experiment(f).BTfluoAVG.ratio(:, index(3)+1:index(4)), 2, 'omitnan');
+    experiment(f).ratio{4}=mean(experiment(f).BTfluoAVG.ratio(:, index(4)+1:index(5)), 2, 'omitnan');
 
+    temp1_lcell=[];
+    temp2_lcell=[];
+    temp3_lcell=[];
+    temp4_lcell=[];
+    
     %now, let's go through each colony and get out BTfluo and BTphase data
     for g=1:experiment(f).colonies
         
@@ -53,12 +57,22 @@ for f=1:length(filename)
         %experiment(f).BTfluo{g}=load([base channel '_BTfluo.mat']);
         experiment(f).BTphase{g}=load([base '_BTphase.mat']);
         
-        experiment(f).lcell{g,1}= experiment(f).BTphase{1, g}.lcell(:, index(1):index(2));
-        experiment(f).lcell{g,2}= experiment(f).BTphase{1, g}.lcell(:, index(2)+1:index(3));
-        experiment(f).lcell{g,3}= experiment(f).BTphase{1, g}.lcell(:, index(3)+1:index(4));
-        experiment(f).lcell{g,4}= experiment(f).BTphase{1, g}.lcell(:, index(4)+1:index(5));
-       
+        temp1 = experiment(f).BTphase{1, g}.lcell(:, index(1):index(2));
+        temp2 = experiment(f).BTphase{1, g}.lcell(:, index(2)+1:index(3));
+        temp3 = experiment(f).BTphase{1, g}.lcell(:, index(3)+1:index(4));
+        temp4 = experiment(f).BTphase{1, g}.lcell(:, index(4)+1:index(5));
+        
+        temp1_lcell=[temp1_lcell; temp1];
+        temp2_lcell=[temp2_lcell; temp2];
+        temp3_lcell=[temp3_lcell; temp3];
+        temp4_lcell=[temp4_lcell; temp4];
+      
     end
+    
+    experiment(f).lcell{1}=mean(temp1_lcell, 2, 'omitnan');
+    experiment(f).lcell{2}=mean(temp2_lcell, 2, 'omitnan');
+    experiment(f).lcell{3}=mean(temp3_lcell, 2, 'omitnan');
+    experiment(f).lcell{4}=mean(temp4_lcell, 2, 'omitnan');
     
 %     %let's get the range of Mg2+ concentrations used
 %     experiment(f).mgRange=cell2mat(struct2cell(load([filelist{f}.name],'mgRange')));
@@ -83,15 +97,23 @@ for f=1:length(filename)
     
 end
 
-maxLength=0;
-for f=1:length(filename)
-    for h=1:length(mgRange)
+avgRatio={};
+avgLength={};
+
+for h=1:length(mgRange)
+    
+    mgRange(h)
+    tempRatio=[];
+    tempLength=[];
+    
+    for f=1:length(filename)
         if any(experiment(f).mgRange==mgRange(h))
-            idx=find(experiment(f).mgRange==mgRange(h))
-            temp_ratio=experiment(f).ratio{:, idx}
-            temp_lcell=experiment(f).lcell{:, idx}
-            end
-            
-        end
+            idx=find(experiment(f).mgRange==mgRange(h));
+            tempRatio=[tempRatio; experiment(f).ratio{idx}];
+            tempLength=[tempLength; experiment(f).lcell{idx}];  
+        end 
     end
+    
+    avgRatio{1,h}=tempRatio;
+    avgLength{1,h}=tempLength;
 end
