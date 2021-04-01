@@ -6,10 +6,10 @@
 clear, close all
 %%%%%%%%%%%%%
 
-%% User Input: FSS
-maindir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/data_analysis/FSS'];
-filename={['03172021_Exp1'] ['03252021_Exp1'] ['03262021_Exp1'] ['03292021_Exp1']};
-channel=['_FSS'];
+%% User Input: 647
+maindir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/data_analysis/647'];
+filename={['03172021_Exp1'] ['03252021_Exp2'] ['03292021_Exp2']};
+channel=['_647'];
 
 %we'd never included index as a variable in the previous scripts in our
 %workflow, so we have to hard code it. for the Mg2+ gradient experiments,
@@ -27,7 +27,7 @@ channel=['_FSS'];
 %     load([file '_BTfluoAVG' channel '.mat'], 'ratio');
 %     mgConc=nan(width(ratio), 1);
 %     experiment=transpose(repelem(filename(f), width(ratio)));
-%     dye=transpose(repelem("FSS", width(ratio)));
+%     dye=transpose(repelem("647", width(ratio)));
 %     
 %     load([file '_BTfluoAVG' channel '.mat'], 'mgRange');
 %     
@@ -66,10 +66,10 @@ channel=['_FSS'];
 %     writetable(dataLength,[file channel '_dataLength.csv']);
 %      
 % end
-
- dataRatio=readtable('mgRatio.csv');
- dataLength=readtable('mgLength.csv');
- mgRange=[0, 3, 6, 6.66, 9, 12, 12.33, 20];
+cd(maindir)
+ dataRatio=readtable('mgRatio_647.csv');
+ dataLength=readtable('mgLength_647.csv');
+ mgRange=[0, 6.66, 12, 12.33, 15, 20];
  avgRatio=[];
  avgLength=[];
  
@@ -111,3 +111,4 @@ channel=['_FSS'];
     fig2pretty 
     saveas(gcf, ['avgMgLength' channel '.png'])
     
+    save(['dataPlots' channel '.mat'])
