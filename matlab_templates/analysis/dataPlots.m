@@ -7,9 +7,9 @@ clear, close all
 %%%%%%%%%%%%%
 
 %% User Input: 647
-maindir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/data_analysis/647'];
-filename={['03172021_Exp1'] ['03252021_Exp2'] ['03292021_Exp2']};
-channel=['_647'];
+maindir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/data_analysis/FSS'];
+filename={['03172021_Exp1'] ['03252021_Exp1'] ['03262021_Exp1'] ['03292021_Exp1']};
+channel=['_FSS'];
 
 %we'd never included index as a variable in the previous scripts in our
 %workflow, so we have to hard code it. for the Mg2+ gradient experiments,
@@ -18,6 +18,34 @@ channel=['_647'];
 %fourth perfusion']
 
 %%%%%%%%%%%%%%%%
+    
+    %first, 03172021_Exp1
+    file=char(filename(4));
+    cd(maindir)
+    dataLength=readtable([file channel '_dataLength.csv']);
+    lengths=transpose(table2array(dataLength(:,4:end)));
+    load([file '_BTfluoAVG' channel '.mat'], 'time');
+    
+    avgLength=mean(lengths, 1, 'omitnan');
+    stdLength=std(lengths, 0, 1, 'omitnan');
+    
+  %let's plot the average length vs Mg2+ 
+    figure, hold on
+    title('Average Cell Length vs Time')
+    ciplot(avgLength - stdLength, avgLength + stdLength, time, [0.75 0.75 1])
+    plot(time, avgLength, '-r') 
+    xlabel('Time (s)')
+    ylabel('Length (\mum)')
+    ylim([0 Inf])
+xline(110, '--k', '*PBS + FSS') %frame 11-21
+xline(220, '--k', '*PBS + FSS + 6.66 mM Mg^{2+}') %frame 22-33
+xline(340, '--k', '*PBS + FSS + 12.33 mM Mg^{2+}') %frame 34-44 
+xline(450, '--k', '*PBS + FSS + 20 mM Mg^{2+}') %frame 45-59
+    fig2pretty 
+    saveas(gcf, [file '_avgLength' channel '.png'])
+    
+    
+    
 % for f=1:length(filename)
 %     
 % 
@@ -66,49 +94,50 @@ channel=['_647'];
 %     writetable(dataLength,[file channel '_dataLength.csv']);
 %      
 % end
-cd(maindir)
- dataRatio=readtable('mgRatio_647.csv');
- dataLength=readtable('mgLength_647.csv');
- mgRange=[0, 6.66, 12, 12.33, 15, 20];
- avgRatio=[];
- avgLength=[];
- 
- ratios=table2array(dataRatio(:,4:end));
- lengths=table2array(dataLength(:,4:end));
- 
- for i=1:length(mgRange)
-    avgRatio(i, :)=mean(ratios(dataRatio.mgConc==mgRange(i),:),1, 'omitnan');
-    avgLength(i, :)=mean(lengths(dataLength.mgConc==mgRange(i),:),1, 'omitnan');
- end
- 
- avgMgRatio=mean(avgRatio, 2, 'omitnan');
- stdMgRatio=std(avgRatio,0,2, 'omitnan');
- 
- avgMgLength=mean(avgLength, 2, 'omitnan');
- stdMgLength=std(avgLength,0,2, 'omitnan');
- 
- %let's plot the average ratio vs Mg2+ 
-    figure, hold on
-    title('Average Intensity/Background vs Mg^{2+} Concentration')
-    errorbar(mgRange,avgMgRatio,stdMgRatio, 'both', 'o')
-    xlabel('Mg^{2+} concentration (mM)')
-    ylabel('Intensity/Background')
-    yline(1, '--k')
-    xlim([-2 22])
-    ylim([0 Inf])
-    %xticks(mgRange)
-    fig2pretty 
-    saveas(gcf, ['avgMgRatio' channel '.png'])
-    
-    %let's plot the average length vs Mg2+ 
-    figure, hold on
-    title('Average Length vs Mg^{2+} Concentration')
-    errorbar(mgRange,avgMgLength,stdMgLength, 'o')
-    xlabel('Mg^{2+} concentration (mM)')
-    ylabel('Length (\mum)')
-    ylim([0 Inf])
-    %xticks(mgRange)
-    fig2pretty 
-    saveas(gcf, ['avgMgLength' channel '.png'])
-    
-    save(['dataPlots' channel '.mat'])
+
+% cd(maindir)
+%  dataRatio=readtable('mgRatio_647.csv');
+%  dataLength=readtable('mgLength_647.csv');
+%  mgRange=[0, 6.66, 12, 12.33, 15, 20];
+%  avgRatio=[];
+%  avgLength=[];
+%  
+%  ratios=table2array(dataRatio(:,4:end));
+%  lengths=table2array(dataLength(:,4:end));
+%  
+%  for i=1:length(mgRange)
+%     avgRatio(i, :)=mean(ratios(dataRatio.mgConc==mgRange(i),:),1, 'omitnan');
+%     avgLength(i, :)=mean(lengths(dataLength.mgConc==mgRange(i),:),1, 'omitnan');
+%  end
+%  
+%  avgMgRatio=mean(avgRatio, 2, 'omitnan');
+%  stdMgRatio=std(avgRatio,0,2, 'omitnan');
+%  
+%  avgMgLength=mean(avgLength, 2, 'omitnan');
+%  stdMgLength=std(avgLength,0,2, 'omitnan');
+%  
+%  %let's plot the average ratio vs Mg2+ 
+%     figure, hold on
+%     title('Average Intensity/Background vs Mg^{2+} Concentration')
+%     errorbar(mgRange,avgMgRatio,stdMgRatio, 'both', 'o')
+%     xlabel('Mg^{2+} concentration (mM)')
+%     ylabel('Intensity/Background')
+%     yline(1, '--k')
+%     xlim([-2 22])
+%     ylim([0 Inf])
+%     %xticks(mgRange)
+%     fig2pretty 
+%     saveas(gcf, ['avgMgRatio' channel '.png'])
+% %     
+%     %let's plot the average length vs Mg2+ 
+%     figure, hold on
+%     title('Average Length vs Mg^{2+} Concentration')
+%     errorbar(mgRange,avgMgLength,stdMgLength, 'o')
+%     xlabel('Mg^{2+} concentration (mM)')
+%     ylabel('Length (\mum)')
+%     ylim([0 Inf])
+%     %xticks(mgRange)
+%     fig2pretty 
+%     saveas(gcf, ['avgMgLength' channel '.png'])
+%     
+%     save(['dataPlots' channel '.mat'])
