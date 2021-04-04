@@ -18,13 +18,13 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename=["02102021_pbs100_colony1", "02102021_pbs100_colony2","02102021_pbs100_colony3"];%Name of the image stack, used to save file.
+basename=["03112021_pbs20_colony1","03112021_pbs20_colony2","03112021_pbs20_colony3"];%Name of the image stack, used to save file.
 dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/pbs_analysis2/'];%Directory that the image stack is saved in.
 savedir=[dirname 'finalAnalysis'];%Directory to save the output .mat file to.
 
 lscale=0.08;%%Microns per pixel.
 thresh=0;%For default, enter zero.
-IntThresh=13000;%Threshold used to enhance contrast. Default:35000
+IntThresh=9252;%Threshold used to enhance contrast. Default:35000
 dr=1;%Radius of dilation before watershed %default: 1
 sm=2;%Parameter used in edge detection %default: 2
 minL=2;%Minimum cell length, default = 2
@@ -35,13 +35,17 @@ crunch=1;%add counts to data and calculate # plasmolysis events/micron 0=No, 1=Y
 checkhist=0;%Display image histogram? 0=No, 1=Yes.
 B=length(basename); %number of main directories to analyze
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if crunch==1
     
-   %load previously processed data
+   %load previously processed data (pbs0, pbs1, pbs10)
    x=load([dirname 'plasmolysisCounter/finalAnalysis/BTplasmolysis.mat'])
         
-    %load the data you just saved
-    y=load([dirname 'plasmolysisCounter/finalAnalysis/BTplasmolysis.mat'])
+    %load the pbs20 data
+    y=load([dirname 'plasmolysisCounter/finalAnalysis/BTpbs20.mat'])
+    
+    %load pbs100 data
+    z=load([dirname 'plasmolysisCounter/finalAnalysis/BTpbs100.mat'])
     
     %load count data
     filename=[ dirname 'README.xlsx'];
@@ -50,34 +54,59 @@ if crunch==1
     %for this analysis, we'll have to average the plasmolysis events for
     %diff colonies of the same experiment
     
-    pis=[mean(data(1:3, 9)), mean(data(4:6, 9)), mean(data(7:9, 9)), mean(data(10:12, 9))];
-    pil=[mean(data(1:3, 10)), mean(data(4:6, 10)), mean(data(7:9, 10)), mean(data(10:12, 10))];
-    pit=[mean(data(1:3, 11)), mean(data(4:6, 11)), mean(data(7:9, 11)), mean(data(10:12, 11))];
-    pfs=[mean(data(1:3, 12)), mean(data(4:6, 12)), mean(data(7:9, 12)), mean(data(10:12, 12))];
-    pfl=[mean(data(1:3, 13)), mean(data(4:6, 13)), mean(data(7:9, 13)), mean(data(10:12, 13))];
-    pft=[mean(data(1:3, 14)), mean(data(4:6, 14)), mean(data(7:9, 14)), mean(data(10:12, 14))];
+    %pis=[mean(data(1:3, 9)), mean(data(4:6, 9)), mean(data(7:9, 9)), mean(data(10:12, 9)), mean(data(13:15, 9))];
+    %pil=[mean(data(1:3, 10)), mean(data(4:6, 10)), mean(data(7:9, 10)), mean(data(10:12, 10))];
+    pit=[mean(data(1:3, 11)), mean(data(4:6, 11)), mean(data(7:9, 11)), mean(data(10:12, 11)), mean(data(13:15, 11))];
+    %pfs=[mean(data(1:3, 12)), mean(data(4:6, 12)), mean(data(7:9, 12)), mean(data(10:12, 12)), mean(data(13:15, 12))];
+    %pfl=[mean(data(1:3, 13)), mean(data(4:6, 13)), mean(data(7:9, 13)), mean(data(10:12, 13))];
+    pft=[mean(data(1:3, 14)), mean(data(4:6, 14)), mean(data(7:9, 14)), mean(data(10:12, 14)),  mean(data(13:15, 14))];
     
-    ltotal=[mean(x.ltotal(1:3)), mean(x.ltotal(4:6)), mean(x.ltotal(7:9)), mean(y.ltotal(1:3))];
+    %calculate stadard deviation
+    sdpit=[std(data(1:3, 11)), std(data(4:6, 11)), std(data(7:9, 11)), std(data(10:12, 11)), std(data(13:15, 11))];
+    sdpft=[std(data(1:3, 14)), std(data(4:6, 14)), std(data(7:9, 14)), std(data(10:12, 14)),  std(data(13:15, 14))];
+    
+    ltotal=[mean(x.ltotal(1:3)), mean(x.ltotal(4:6)), mean(x.ltotal(7:9)), mean(y.ltotal(1:3)), mean(z.ltotal(1:3))];
+    
+    %calculate stadard deviation
+    sdpit=[std(data(1:3, 11)), std(data(4:6, 11)), std(data(7:9, 11)), std(data(10:12, 11)), std(data(13:15, 11))]./ltotal;
+    sdpft=[std(data(1:3, 14)), std(data(4:6, 14)), std(data(7:9, 14)), std(data(10:12, 14)),  std(data(13:15, 14))]./ltotal;
     
     %calculate plasmolysis events/micron immediately after shock
-    pism=pis./ltotal;
-    pilm=pil./ltotal;
+    %pism=pis./ltotal;
+    %pilm=pil./ltotal;
     pitm=pit./ltotal;
-    pfsm=pfs./ltotal;
-    pflm=pfl./ltotal;
+    %pfsm=pfs./ltotal;
+    %pflm=pfl./ltotal;
     pftm=pft./ltotal;
 
     %plot
-    tiledlayout(1, 3)
+    figure
+    X=[0, 1, 10, 20, 100];
+    errorbar(X,pitm,sdpit, '-o')
+    ylabel('Plasmolysis Events/Micron Post-Hyperosmotic Shock')
+    xlabel('Time (minutes) Perfused with PBS Pre-shock')
+    ylim([0, 0.3])
+    xlim([-2, 102])
+    
+     %plot
+    figure
+    X=[0, 1, 10, 20, 100];
+    errorbar(X,pftm, sdpft, '-o')
+    ylabel('Plasmolysis Events/Micron A Few Minutes Post-Hyperosmotic Shock')
+    xlabel('Time (minutes) Perfused with PBS Pre-shock')
+    ylim([0, 0.3])
+    xlim([-2, 102])
+    
+    %tiledlayout(1, 3)
     
     %nexttile
     %X=categorical({'immediately after shock', '10 min after shock'});
     %X=reordercats(X, {'immediately after shock', '10 min after shock'});
-    X=[0,10];
-    createfigure(X, [pitm; pftm])
-    ylabel('Plasmolysis Events/Micron Post-Hyperosmotic Shock')
-    xlabel({'Time (minutes after hypershock)'})
-    legend('pbs 0 min','pbs 1 min', 'pbs 10 min', 'pbs 100 min')
+    %X=[0,10];
+    %createfigure(X, [pitm; pftm])
+    %ylabel('Plasmolysis Events/Micron Post-Hyperosmotic Shock')
+    %xlabel({'Time (minutes after hypershock)'})
+    %legend('pbs 0 min','pbs 1 min', 'pbs 10 min', 'pbs 100 min')
     
     %nexttile
     %X=categorical({'immediately after shock', '10 min after shock'});
@@ -468,31 +497,31 @@ else
 
     %Save data
     cd(savedir)
-    save('BTpbs100.mat')
+    save('BTpbs20.mat')
         
-    if crunch==-1
-        
-        %load previously processed data
-        y=load([savedir '/BTplasmolysis.mat'])
-        
-        %load the data you just saved
-        x=load([savedir '/BTpbs100.mat'])
-    
-        % Check to see that both files contain the same variables
-        vrs = fieldnames(x);
-        if ~isequal(vrs,fieldnames(y))
-            error('Different variables in these MAT-files')
-        end
-        
-        % Concatenate data
-        for k = 1:length(vrs)
-            x.(vrs{k}) = [x.(vrs{k});y.(vrs{k})];
-        end
-    
-        % Save result in a new file
-        cd(savedir)
-        save('BTplasmolysis_final.mat')
-       
-    end %end of crunch=-1
+%     if crunch==-1
+%         
+%         %load previously processed data
+%         y=load([savedir '/BTplasmolysis.mat'])
+%         
+%         %load the data you just saved
+%         x=load([savedir '/BTpbs20.mat'])
+%     
+%         % Check to see that both files contain the same variables
+%         vrs = fieldnames(x);
+%         if ~isequal(vrs,fieldnames(y))
+%             error('Different variables in these MAT-files')
+%         end
+%         
+%         % Concatenate data
+%         for k = 1:length(vrs)
+%             x.(vrs{k}) = [x.(vrs{k});y.(vrs{k})];
+%         end
+%     
+%         % Save result in a new file
+%         cd(savedir)
+%         save('BTplasmolysis_final_2.mat')
+%        
+%     end %end of crunch=-1
     
 end %end of if crunch=1
