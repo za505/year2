@@ -2,37 +2,41 @@
 
 clear, close all
 
-filename=('09142021_growthCurve.xlsx');
+filename=('09162021_growthCurve.xlsx');
 fullpath=('/Users/zarina/Downloads/NYU/Year3_2021_Fall/growthCurves');
-xlRange='B51:EM74';
+xlRange='B51:EL80';
 nwells=96;
-T=142;
+T=141;
 
 %Conditions
-cond1=[1:4:9]; % ER002
-blank1=[13:4:21]; % LB blank 
-cond2=[2:4:10]; % ER340
-blank2=[14:4:22]; % LB blank
-cond3=[3:4:11]; % ER341
-blank3=[15:4:23]; % LB + 1% xylose
-cond4=[4:4:12]; % ER012
-blank4=[16,20]; %BHI blank
+cond1=[1:5:11]; % ER466 LB
+blank1=[16:5:26]; % LB blank 
+cond2=[2:5:12]; % ER466 BHI
+blank2=[17:5:27]; % BHI blank
+cond3=[3:5:13]; % ER466 TSB
+blank3=[18:5:28]; % TSB blank
+cond4=[4:5:14]; % ER451
+blank4=[19:5:29]; %JH9 blank
+cond5=[5:5:15]; % ER451
+blank5=[20:5:30]; %LB blank
 
-condlab={'WT','ER340', 'ER341', 'ER012'};
+condlab={'ER466 LB','ER466 BHI', 'ER466 TSB', 'ER451 JH9', 'ER451 LB'};
 
 %upload file
+cd(fullpath)
 GCtable=xlsread(filename,xlRange);
 OD=GCtable;
 tscale=GCtable(1,:)/600;
 
 %parse data
-WellInd={cond1,blank1;
+WellInd={cond1,blank1; %first column, cond wells, second column blanks
   cond2,blank2;
   cond3,blank3;
   cond4,blank4;
+  cond5,blank5;
   };
 
-[Ncond ~]=size(WellInd);
+[Ncond ~]=size(WellInd); % # rows = # conditions
 wellODi=cell(Ncond,1);
 blankODi=cell(Ncond,1);
 OD_av=zeros(Ncond,T);
@@ -41,12 +45,16 @@ OD_norm=zeros(Ncond,T);
 std_OD=zeros(Ncond,T);
 
 for i=1:1:Ncond
-    wellODi{i,:}=OD(WellInd{i,1},:);
-    blankODi{i,:}=OD(WellInd{i,2},:);
+    wellODi{i,:}=OD(WellInd{i,1},:); %get the OD from the # wells in the first column of the cell array
+    if i==2
+        blankODi{i,:}=repelem(OD(WellInd{i,2},1),T); %index values in the second column of the cell array
+    else
+        blankODi{i,:}=OD(WellInd{i,2},:); %index values in the second column of the cell array
+    end
 end
 
 for i=1:Ncond
-    OD_av(i,:)=mean(wellODi{i},1);
+    OD_av(i,:)=mean(wellODi{i},1); %take the temporal average
     OD_av_bl(i,:)=mean(blankODi{i},1);
     OD_norm=(OD_av-OD_av_bl);
     std_OD(i,:)=std(OD_norm,1);
@@ -71,7 +79,7 @@ time3=([0:T-1]*600)/3600;
 
 figure
 plot(time2,eOD_smooth*3600)
-title('Growth Rate for B.subtilis Evolved Clones in SA')
+title('Growth Rate')
 xlabel('Time (h)')
 ylabel('Growth Rate (h^{-1})')
 legend(condlab)
@@ -79,7 +87,7 @@ fig2pretty
 
 figure
 plot(time3,OD_norm_smooth)
-title('Growth Curve for B.subtilis Evolved Clones in SA')
+title('Growth Curve')
 xlabel('Time (h)')
 ylabel('OD(AU)')
 legend(condlab)
@@ -87,13 +95,13 @@ fig2pretty
 
 
 figure
-ciplot((OD_norm_smooth-std_OD),(OD_norm_smooth+std_OD),time3,[0.75 0.75 1])
+%ciplot((OD_norm_smooth-std_OD),(OD_norm_smooth+std_OD),time3,[0.75 0.75 1])
 xlabel('Time (h)')
 ylabel('OD(AU)')
 fig2pretty
 hold on
 plot(time3,OD_norm_smooth,'LineWidth',2)
-title('Growth Curve with standard deviation for B.subtilis Evolved Clones in SA')
+title('Growth Curve')
 xlabel('Time (h)')
 ylabel('OD(AU)')
-legend(condlab2)
+legend(condlab)
