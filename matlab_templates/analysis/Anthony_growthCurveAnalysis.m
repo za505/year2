@@ -2,25 +2,23 @@
 
 clear, close all
 
-filename=('09162021_growthCurve.xlsx');
+filename=('09142021_growthCurve.xlsx');
 fullpath=('/Users/zarina/Downloads/NYU/Year3_2021_Fall/growthCurves');
-xlRange='B51:EL80';
+xlRange='B51:EM74';
 nwells=96;
-T=141;
+T=142;
 
 %Conditions
-cond1=[1:5:11]; % ER466 LB
-blank1=[16:5:26]; % LB blank 
-cond2=[2:5:12]; % ER466 BHI
-blank2=[17:5:27]; % BHI blank
-cond3=[3:5:13]; % ER466 TSB
-blank3=[18:5:28]; % TSB blank
-cond4=[4:5:14]; % ER451
-blank4=[19:5:29]; %JH9 blank
-cond5=[5:5:15]; % ER451
-blank5=[20:5:30]; %LB blank
+cond1=[1:4:9]; % ER002
+blank1=[13:4:21]; % LB blank 
+cond2=[2:4:10]; % ER340
+blank2=[14:4:22]; % LB blank
+cond3=[3:4:11]; % ER341
+blank3=[15:4:23]; % LB + 1% xylose
+cond4=[4:4:12]; % ER012
+blank4=[16,20]; %BHI blank
 
-condlab={'ER466 LB','ER466 BHI', 'ER466 TSB', 'ER451 JH9', 'ER451 LB'};
+condlab={'WT','ER340', 'ER341', 'ER012'};
 
 %upload file
 cd(fullpath)
@@ -33,7 +31,6 @@ WellInd={cond1,blank1; %first column, cond wells, second column blanks
   cond2,blank2;
   cond3,blank3;
   cond4,blank4;
-  cond5,blank5;
   };
 
 [Ncond ~]=size(WellInd); % # rows = # conditions
@@ -46,11 +43,7 @@ std_OD=zeros(Ncond,T);
 
 for i=1:1:Ncond
     wellODi{i,:}=OD(WellInd{i,1},:); %get the OD from the # wells in the first column of the cell array
-    if i==2
-        blankODi{i,:}=repelem(OD(WellInd{i,2},1),T); %index values in the second column of the cell array
-    else
-        blankODi{i,:}=OD(WellInd{i,2},:); %index values in the second column of the cell array
-    end
+    blankODi{i,:}=OD(WellInd{i,2},:); %index values in the second column of the cell array
 end
 
 for i=1:Ncond
