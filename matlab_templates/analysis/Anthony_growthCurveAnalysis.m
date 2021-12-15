@@ -2,53 +2,53 @@
 
 clear, close all
 
-filename=('09142021_growthCurve.xlsx');
+filename=('12122021_growthCurve.xlsx');
 fullpath=('/Users/zarina/Downloads/NYU/Year3_2021_Fall/growthCurves');
-xlRange='B51:EM74';
-nwells=96;
-T=142;
+xlRange='B46:DY75';
+nwells=30;
+T=128;
 
 %Conditions
-cond1=[1:4:9]; % ER002
-blank1=[13:4:21]; % LB blank 
-cond2=[2:4:10]; % ER340
-blank2=[14:4:22]; % LB blank
-cond3=[3:4:11]; % ER341
-blank3=[15:4:23]; % LB + 1% xylose
-cond4=[4:4:12]; % ER012
-blank4=[16,20]; %BHI blank
+cond1=[1:6]; % 1:100
+cond2=[7:12]; % 1:250
+cond3=[13:18]; % 1:150
+cond4=[19:24]; % 1:1000
+blank=[25:30]; % LB blank 
 
-condlab={'WT','ER340', 'ER341', 'ER012'};
+condlab={'1:100','1:250', '1:500', '1:1000'};
 
 %upload file
 cd(fullpath)
 GCtable=xlsread(filename,xlRange);
 OD=GCtable;
-tscale=GCtable(1,:)/600;
 
 %parse data
-WellInd={cond1,blank1; %first column, cond wells, second column blanks
-  cond2,blank2;
-  cond3,blank3;
-  cond4,blank4;
+WellInd={cond1; %first column, cond wells, second column blanks
+  cond2;
+  cond3;
+  cond4;
   };
 
 [Ncond ~]=size(WellInd); % # rows = # conditions
 wellODi=cell(Ncond,1);
-blankODi=cell(Ncond,1);
+%blankODi=cell(Ncond,1);
 OD_av=zeros(Ncond,T);
-OD_av_bl=zeros(Ncond,T);
+%OD_av_bl=zeros(Ncond,T);
 OD_norm=zeros(Ncond,T);
 std_OD=zeros(Ncond,T);
 
+%get mean OD for blank
+blankODi=OD(blank, :);
+OD_av_bl=mean(blankODi,1);
+
 for i=1:1:Ncond
     wellODi{i,:}=OD(WellInd{i,1},:); %get the OD from the # wells in the first column of the cell array
-    blankODi{i,:}=OD(WellInd{i,2},:); %index values in the second column of the cell array
+    %blankODi{i,:}=OD(WellInd{i,2},:); %index values in the second column of the cell array
 end
 
 for i=1:Ncond
     OD_av(i,:)=mean(wellODi{i},1); %take the temporal average
-    OD_av_bl(i,:)=mean(blankODi{i},1);
+    %OD_av_bl(i,:)=mean(blankODi{i},1);
     OD_norm=(OD_av-OD_av_bl);
     std_OD(i,:)=std(OD_norm,1);
 end
@@ -98,3 +98,6 @@ title('Growth Curve')
 xlabel('Time (h)')
 ylabel('OD(AU)')
 legend(condlab)
+
+%% Prediction
+
