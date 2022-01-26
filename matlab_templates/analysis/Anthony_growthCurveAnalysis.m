@@ -2,31 +2,24 @@
 
 clear, close all
 
-filename=('01242022_growthCurve.xlsx');
+filename=('01252022_growthCurve.xlsx');
 fullpath=('/Users/zarina/Downloads/NYU/Year3_2022_Spring/growthCurves');
-xlRange='B50:DH103';
-nwells=54;
-T=111;
+xlRange='B46:N78';
+nwells=33;
+T=13;
 
 %Conditions
 cond1=[7:12]; % Control
-cond2=[13:15]; % vanco1
-cond3=[16:18]; % vanco2
-cond4=[19:21]; % amp1
-cond5=[22:24]; % amp2 
-cond6=[25:27]; % cef1
-cond7=[28:30]; % cef2 
-cond8=[31:33]; % fos1
-cond9=[34:36]; % fos2
-cond10=[37:39]; % carb1
-cond11=[40:42]; % carb2
-cond12=[43:45]; % tun1
-cond13=[46:48]; % tun2
-cond14=[49:51]; % moe1
-cond15=[52:54]; % moe2
+cond2=[13:15]; % vanco
+cond3=[16:18]; % amp
+cond4=[19:21]; % cef
+cond5=[22:24]; % fos 
+cond6=[25:27]; % carb
+cond7=[28:30]; % tun 
+cond8=[31:33]; % moe
 blank=[1:6];
 
-condlab={'Control', 'vancomycin 1', 'vancomycin 2', 'ampicillin 1', 'ampicillin 2', 'cefsulodin 1', 'cefsulodin 2', 'phosphomycin 1', 'phosphomycin 2', 'carbenicillin 1', 'carbenicillin 2', 'tunicamycin 1', 'tunicamycin 2', 'moenomycin 1', 'moenomycin 2'};
+condlab={'Control', 'vancomycin', 'ampicillin', 'cefsulodin', 'phosphomycin','carbenicillin','tunicamycin', 'moenomycin'};
 
 %upload file
 cd(fullpath)
@@ -41,14 +34,7 @@ WellInd={cond1; %first column, cond wells, second column blanks
   cond5;
   cond6;
   cond7;
-  cond8;
-  cond9;
-  cond10;
-  cond11;
-  cond12; 
-  cond13;
-  cond14;
-  cond15;   
+  cond8;   
   };
 
 [Ncond ~]=size(WellInd); % # rows = # conditions
