@@ -2,24 +2,22 @@
 
 clear, close all
 
-filename=('01252022_growthCurve.xlsx');
+filename=('01272022_growthCurve.xlsx');
 fullpath=('/Users/zarina/Downloads/NYU/Year3_2022_Spring/growthCurves');
-xlRange='B46:N78';
-nwells=33;
-T=13;
+xlRange='B51:DZ77';
+nwells=27;
+T=129;
 
 %Conditions
 cond1=[7:12]; % Control
-cond2=[13:15]; % vanco
-cond3=[16:18]; % amp
-cond4=[19:21]; % cef
-cond5=[22:24]; % fos 
-cond6=[25:27]; % carb
-cond7=[28:30]; % tun 
-cond8=[31:33]; % moe
+cond2=[13:15]; % Cm1
+cond3=[16:18]; % Cm2
+cond4=[19:21]; % Cm3
+cond5=[22:24]; % Cm4 
+cond6=[25:27]; % Cm5
 blank=[1:6];
 
-condlab={'Control', 'vancomycin', 'ampicillin', 'cefsulodin', 'phosphomycin','carbenicillin','tunicamycin', 'moenomycin'};
+condlab={'Control', 'Cm 100 ug/mL', 'Cm 50 ug/mL', 'Cm 35 ug/mL', 'Cm 15 ug/mL', 'Cm 5 ug/mL'};
 
 %upload file
 cd(fullpath)
@@ -32,9 +30,7 @@ WellInd={cond1; %first column, cond wells, second column blanks
   cond3;
   cond4;
   cond5;
-  cond6;
-  cond7;
-  cond8;   
+  cond6;  
   };
 
 [Ncond ~]=size(WellInd); % # rows = # conditions
