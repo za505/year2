@@ -2,22 +2,24 @@
 
 clear, close all
 
-filename=('01272022_growthCurve.xlsx');
+filename=('04072022_growthCurve_01.xlsx');
 fullpath=('/Users/zarina/Downloads/NYU/Year3_2022_Spring/growthCurves');
-xlRange='B51:DZ77';
-nwells=27;
-T=129;
+xlRange='B62:EL121';
+nwells=60;
+T=141;
+contamination = [];
 
 %Conditions
-cond1=[7:12]; % Control
-cond2=[13:15]; % Cm1
-cond3=[16:18]; % Cm2
-cond4=[19:21]; % Cm3
-cond5=[22:24]; % Cm4 
-cond6=[25:27]; % Cm5
-blank=[1:6];
+media = {'LB', 'RDM glucose', 'RDM sorbitol', 'RDM sucrose', 'RDM glycerol'};
+strains = {'ER002', 'ER300', 'ER005'};
 
-condlab={'Control', 'Cm 100 ug/mL', 'Cm 50 ug/mL', 'Cm 35 ug/mL', 'Cm 15 ug/mL', 'Cm 5 ug/mL'};
+layout = reshape(1:60, 3, 20)';
+bidx = [1:4:height(layout)];
+cidx = setdiff(1:20, bidx);
+conditions = mat2cell(layout(cidx, :), ones(1, 15));
+blank = mat2cell(layout(bidx, :), ones(1, 5));
+
+condlab = {'LB 1', 'LB 2', 'LB 3', 'RDM glucose 1', 'RDM glucose 2', 'RDM glucose 3', 'RDM sorbitol 1', 'RDM sorbitol 2', 'RDM sorbitol 3', 'RDM sucrose 1', 'RDM sucrose 2', 'RDM sucrose 3', 'RDM glycerol 1', 'RDM glycerol 2', 'RDM glycerol 3'};
 
 %upload file
 cd(fullpath)
@@ -25,34 +27,51 @@ GCtable=xlsread(filename,xlRange);
 OD=GCtable;
 
 %parse data
-WellInd={cond1; %first column, cond wells, second column blanks
-  cond2;
-  cond3;
-  cond4;
-  cond5;
-  cond6;  
-  };
+count = 1;
+for i=1:height(conditions)
+    
+    if isempty(contamination)==0
+        blank{count,1} = setdiff(blank{count,1}, contamination);
+    end
+    
+    conditions(i, 2) = blank(count,1);
+    
+    if mod(i,3)==0
+        count = count+1;
+    end
+               
+end
+
+% WellInd={cond1; %first column, cond wells, second column blanks
+%   cond2;
+%   cond3;
+%   cond4;
+%   cond5;
+%   cond6;  
+%   };
+
+WellInd = conditions;
 
 [Ncond ~]=size(WellInd); % # rows = # conditions
 wellODi=cell(Ncond,1);
-%blankODi=cell(Ncond,1);
+blankODi=cell(Ncond,1);
 OD_av=zeros(Ncond,T);
-%OD_av_bl=zeros(Ncond,T);
+OD_av_bl=zeros(Ncond,T);
 OD_norm=zeros(Ncond,T);
 std_OD=zeros(Ncond,T);
 
 %get mean OD for blank
-blankODi=OD(blank, :);
-OD_av_bl=mean(blankODi,1);
+%blankODi=OD(blank, :);
+%OD_av_bl=mean(blankODi,1);
 
 for i=1:1:Ncond
     wellODi{i,:}=OD(WellInd{i,1},:); %get the OD from the # wells in the first column of the cell array
-    %blankODi{i,:}=OD(WellInd{i,2},:); %index values in the second column of the cell array
+    blankODi{i,:}=OD(WellInd{i,2},:); %index values in the second column of the cell array
 end
 
 for i=1:Ncond
     OD_av(i,:)=mean(wellODi{i},1); %take the temporal average
-    %OD_av_bl(i,:)=mean(blankODi{i},1);
+    OD_av_bl(i,:)=mean(blankODi{i},1);
     OD_norm=(OD_av-OD_av_bl);
     std_OD(i,:)=std(OD_norm,1);
 end
@@ -79,8 +98,10 @@ plot(time2,eOD_smooth*3600)
 title('Growth Rate')
 xlabel('Time (h)')
 ylabel('Growth Rate (h^{-1})')
+xline(time2(16), '--k')
 legend(condlab)
 fig2pretty
+
 
 figure
 plot(time3,OD_norm_smooth)
@@ -88,8 +109,20 @@ title('Growth Curve')
 xlabel('Time (h)')
 ylabel('OD(AU)')
 legend(condlab)
+xline(time2(16), '--k')
 fig2pretty
-% 
+
+maxGR = nan(5, 2);
+maxTime = nan(5, 2);
+
+[maxGR(:, 1), idx] = max(eOD_smooth([1, 4, 7, 10, 13], :)*3600, [], 2);
+maxTime(:, 1) = time2(idx') * 60;
+[maxGR(:, 2), idx] = max(eOD_smooth([2, 5, 8, 11, 14], :)*3600, [], 2);
+maxTime(:, 2) = time2(idx') * 60;
+
+savename = filename(1:length(filename)-5);
+save(savename)
+
 % 
 % figure
 % %ciplot((OD_norm_smooth-std_OD),(OD_norm_smooth+std_OD),time3,[0.75 0.75 1])
