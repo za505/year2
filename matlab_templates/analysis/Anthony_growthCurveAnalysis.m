@@ -2,178 +2,32 @@
 
 clear, close all
 
-fullpath=('/Users/zarina/Downloads/NYU/Year3_2022_Spring/growthCurves');
-dirsave = '/Users/zarina/Downloads/NYU/Year3_2022_Spring/mNeonGreen_analysis/figures/';
-
-okabeIto = {[230, 159, 0], [86, 180, 233], [0, 158, 115], [240, 228, 66], [0, 114, 178], [213, 94, 0], [204, 121, 167], [0, 0, 0]};
-okabeIto = cellfun(@(x)(x./255), okabeIto, 'UniformOutput', false);
-okabeIto = [okabeIto, okabeIto];
-
-cd(fullpath)
-
-ER300 = [2, 5, 8, 11, 14];
-labels = {'LB', 'glucose', 'sorbitol', 'sucrose', 'glycerol'};
-
-load('04052022_growthCurve.mat')
-
-cd(dirsave)
-
-v = 1;
-figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 1)
-for i=ER300
-    plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-legend(labels)
-title('Growth Rate')
-xlabel('Time (h)')
-ylabel('Growth Rate (h^{-1})')
-%xline(time2(16), '--k')
-fig2pretty
-% pause
-% saveas(gcf, 'figure25.png')
-% saveas(gcf, 'figure25.fig')
-
-v = 1;
-%figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 2)
-for i=ER300
-    plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Curve')
-xlabel('Time (h)')
-ylabel('OD(AU)')
-legend(labels)
-%xline(time2(16), '--k')
-fig2pretty
-pause
-saveas(gcf, 'figure25.png')
-saveas(gcf, 'figure25.fig')
-
-cd(fullpath)
-
-ER300 = [2, 5, 8, 11, 14];
-labels = {'LB', 'glucose', 'sorbitol', 'sucrose', 'glycerol'};
-
-load('04062022_growthCurve.mat')
-
-cd(dirsave)
-
-v = 1;
-figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 1)
-for i=ER300
-    plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Rate')
-xlabel('Time (h)')
-ylabel('Growth Rate (h^{-1})')
-%xline(time2(16), '--k')
-legend(labels)
-fig2pretty
-% pause
-% saveas(gcf, 'figure27.png')
-% saveas(gcf, 'figure27.fig')
-
-v = 1;
-%figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 2)
-for i=ER300
-    plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Curve')
-xlabel('Time (h)')
-ylabel('OD(AU)')
-legend(labels)
-%xline(time2(16), '--k')
-fig2pretty
-pause
-saveas(gcf, 'figure26.png')
-saveas(gcf, 'figure26.fig')
-
-cd(fullpath)
-load('04072022_growthCurve_01.mat')
-
-cd(dirsave)
-
-v = 1;
-figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 1)
-for i=ER300
-    plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Rate')
-xlabel('Time (h)')
-ylabel('Growth Rate (h^{-1})')
-%xline(time2(16), '--k')
-legend(labels)
-fig2pretty
-% pause
-% saveas(gcf, 'figure29.png')
-% saveas(gcf, 'figure29.fig')
-
-v = 1;
-%figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 2)
-for i=ER300
-    plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Curve')
-xlabel('Time (h)')
-ylabel('OD(AU)')
-legend(labels)
-%xline(time2(16), '--k')
-fig2pretty
-pause
-saveas(gcf, 'figure27.png')
-saveas(gcf, 'figure27.fig')
 %% original
 fullpath=('/Users/zarina/Downloads/NYU/Year3_2022_Spring/growthCurves');
-filename=('04072022_growthCurve_01.xlsx');
+filename=('04082022_growthCurve.xlsx');
 
-xlRange='B62:EL121';
-nwells=60;
-T=141;
+xlRange='B3:EO98';
+nwells=96;
+T=144;
 contamination = [];
 
 %Conditions
-media = {'LB', 'RDM glucose', 'RDM sorbitol', 'RDM sucrose', 'RDM glycerol'};
-strains = {'ER002', 'ER300', 'ER005'};
+media = {'LB1', 'LB2', 'LB3', 'LB4', 'LB5', 'LB6', 'LB7', 'LB8'};
+strains = {'ER002'};
 
-layout = reshape(1:60, 3, 20)';
-bidx = [1:4:height(layout)];
-cidx = setdiff(1:20, bidx);
-conditions = mat2cell(layout(cidx, :), ones(1, 15));
-blank = mat2cell(layout(bidx, :), ones(1, 5));
+layout = reshape(1:96, 6, 16)';
+bidx = [1:2:height(layout)];
+cidx = setdiff(1:16, bidx);
+conditions = mat2cell(layout(cidx, :), ones(1, 8));
+blank = mat2cell(layout(bidx, :), ones(1, 8));
+conditions = [conditions, blank];
 
-condlab = {'LB 1', 'LB 2', 'LB 3', 'RDM glucose 1', 'RDM glucose 2', 'RDM glucose 3', 'RDM sorbitol 1', 'RDM sorbitol 2', 'RDM sorbitol 3', 'RDM sucrose 1', 'RDM sucrose 2', 'RDM sucrose 3', 'RDM glycerol 1', 'RDM glycerol 2', 'RDM glycerol 3'};
+condlab = {'LB1', 'LB2', 'LB3', 'LB4', 'LB5', 'LB6', 'LB7', 'LB8'};
 
 %upload file
 cd(fullpath)
 GCtable=xlsread(filename,xlRange);
 OD=GCtable;
-
-%parse data
-count = 1;
-for i=1:height(conditions)
-    
-    if isempty(contamination)==0
-        blank{count,1} = setdiff(blank{count,1}, contamination);
-    end
-    
-    conditions(i, 2) = blank(count,1);
-    
-    if mod(i,3)==0
-        count = count+1;
-    end
-               
-end
 
 % WellInd={cond1; %first column, cond wells, second column blanks
 %   cond2;
@@ -234,7 +88,8 @@ ylabel('Growth Rate (h^{-1})')
 xline(time2(16), '--k')
 legend(condlab)
 fig2pretty
-
+savename = filename(1:length(filename)-5);
+saveas(gcf, [savename '_growthRate.fig'])
 
 figure
 plot(time3,OD_norm_smooth)
@@ -244,6 +99,8 @@ ylabel('OD(AU)')
 legend(condlab)
 xline(time2(16), '--k')
 fig2pretty
+savename = filename(1:length(filename)-5);
+saveas(gcf, [savename '_growthCurve.fig'])
 
 maxGR = nan(5, 2);
 maxTime = nan(5, 2);
