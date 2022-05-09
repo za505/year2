@@ -13,7 +13,7 @@ filename=('04272022_growthCurve.xlsx');
 xlRange='B51:EM110';
 nwells=60;
 T=142;
-contamination = [];
+contamination = [33];
 
 %Conditions
 media = {'LB', '2.5 hr spent', '3.5 hr spent', '4.5 hr spent', '5.5 hr spent'};
@@ -22,8 +22,25 @@ strains = {'ER300'};
 layout = reshape(1:60, 6, 10)';
 bidx = [1:2:height(layout)];
 cidx = setdiff(1:10, bidx);
-conditions = mat2cell(layout(cidx, :), ones(1, 5));
-blank = mat2cell(layout(bidx, :), ones(1, 5));
+if isempty(contamination)
+    conditions = mat2cell(layout(cidx, :), ones(1, 5));
+    blank = mat2cell(layout(bidx, :), ones(1, 5));
+else
+    conditions = cell(length(cidx), 1);
+    blank = cell(length(bidx), 1);
+    for i=1:length(cidx)
+        j = cidx(i);
+        wval = setdiff(layout(j, :), contamination);
+        conditions{i} = wval;
+    end
+    
+    for i=1:length(bidx)
+        j = bidx(i);
+        wval = setdiff(layout(j, :), contamination);
+        blank{i} = wval;
+    end
+end
+
 conditions = [conditions, blank];
 
 condlab = {'LB', '2.5 hr spent', '3.5 hr spent', '4.5 hr spent', '5.5 hr spent'};
@@ -113,16 +130,45 @@ time3=([0:T-1]*600)/3600;
 % maxTime(:, 1) = time2(idx') * 60;
 % [maxGR(:, 2), idx] = max(eOD_smooth([2, 5, 8, 11, 14], :)*3600, [], 2);
 % maxTime(:, 2) = time2(idx') * 60;
-figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
+% figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
+% subplot(1, 2, 1)
+% for i=1:length(condlab)
+%     plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{i}), hold on
+% end
+% title('Growth Rate')
+% xlabel('Time (h)')
+% ylabel('Growth Rate (h^{-1})')
+% %xline(time2(16), '--k')
+% legend(condlab)
+% fig2pretty
+% % pause
+% % saveas(gcf, 'figure29.png')
+% % saveas(gcf, 'figure29.fig')
+% 
+% %figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
+% subplot(1, 2, 2)
+% for i=1:length(condlab)
+%     plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{i}), hold on
+% end
+% title('Growth Curve')
+% xlabel('Time (h)')
+% ylabel('OD(AU)')
+% legend(condlab)
+% %xline(time2(16), '--k')
+% fig2pretty
+
+%% for the thesis update
+idx = [1,5];
+figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 30), hold on
 subplot(1, 2, 1)
-for i=1:length(condlab)
+for i=idx
     plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{i}), hold on
 end
 title('Growth Rate')
 xlabel('Time (h)')
 ylabel('Growth Rate (h^{-1})')
 %xline(time2(16), '--k')
-legend(condlab)
+legend({'LB', 'Spent Media'})
 fig2pretty
 % pause
 % saveas(gcf, 'figure29.png')
@@ -130,18 +176,18 @@ fig2pretty
 
 %figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
 subplot(1, 2, 2)
-for i=1:length(condlab)
+for i=idx
     plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{i}), hold on
 end
 title('Growth Curve')
 xlabel('Time (h)')
 ylabel('OD(AU)')
-legend(condlab)
+legend({'LB', 'Spent Media'})
 %xline(time2(16), '--k')
 fig2pretty
 
-savename = filename(1:length(filename)-5);
-save(savename)
+% savename = filename(1:length(filename)-5);
+% save(savename)
 
 % 
 % figure
