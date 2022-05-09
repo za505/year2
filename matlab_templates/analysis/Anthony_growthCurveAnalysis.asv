@@ -1,57 +1,12 @@
-
 %Growth Curve annd growth rate code with standard deviation
 
 clear, close all
 
-fullpath=('/Users/zarina/Downloads/NYU/Year3_2022_Spring/growthCurves');
-dirsave = '/Users/zarina/Downloads/NYU/Year3_2022_Spring/mNeonGreen_analysis/figures/';
-
 okabeIto = {[230, 159, 0], [86, 180, 233], [0, 158, 115], [240, 228, 66], [0, 114, 178], [213, 94, 0], [204, 121, 167], [0, 0, 0]};
 okabeIto = cellfun(@(x)(x./255), okabeIto, 'UniformOutput', false);
 okabeIto = [okabeIto, okabeIto];
 
-cd(fullpath)
-
-ER300 = [2, 5, 8, 11, 14];
-labels = {'LB', 'glucose', 'sorbitol', 'sucrose', 'glycerol'};
-
-load('04052022_growthCurve.mat')
-
-cd(dirsave)
-
-v = 1;
-figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 30), hold on
-subplot(1, 2, 1)
-for i=ER300
-    plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-legend(labels)
-title('Growth Rate')
-xlabel('Time (h)')
-ylabel('Growth Rate (h^{-1})')
-fig2pretty
-
-
-v = 1;
-subplot(1, 2, 2)
-for i=ER300
-    plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Curve')
-xlabel('Time (h)')
-ylabel('OD(AU)')
-legend(labels)
-fig2pretty
-
-%% spent media
-clear, close all
-
-okabeIto = {[230, 159, 0], [86, 180, 233], [0, 158, 115], [240, 228, 66], [0, 114, 178], [213, 94, 0], [204, 121, 167], [0, 0, 0]};
-okabeIto = cellfun(@(x)(x./255), okabeIto, 'UniformOutput', false);
-okabeIto = [okabeIto, okabeIto];
-
+%% original
 fullpath=('/Users/zarina/Downloads/NYU/Year3_2022_Spring/growthCurves');
 filename=('04272022_growthCurve.xlsx');
 
@@ -139,111 +94,138 @@ eOD=dOD./(OD_norm_smooth(:,1:1:end-1))/600;
 eOD_smooth=movingaverage(eOD,5); 
 eOD_smooth(eOD_smooth<=0)=0; %any negative growth rates become 0
 
+
 tmid=(time(2:2:end)+time(1:2:end-1))/2;
 tim=tmid./3600;
 time2=([0:T-2]*600)/3600;
 time3=([0:T-1]*600)/3600;
 
-figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 30), hold on
+
+% figure
+% plot(time2,eOD_smooth*3600)
+% title('Growth Rate')
+% xlabel('Time (h)')
+% ylabel('Growth Rate (h^{-1})')
+% xline(time2(16), '--k')
+% legend(condlab)
+% fig2pretty
+% savename = filename(1:length(filename)-5);
+% saveas(gcf, [savename '_growthRate.fig'])
+% 
+% figure
+% plot(time3,OD_norm_smooth)
+% title('Growth Curve')
+% xlabel('Time (h)')
+% ylabel('OD(AU)')
+% legend(condlab)
+% xline(time2(16), '--k')
+% fig2pretty
+% savename = filename(1:length(filename)-5);
+% saveas(gcf, [savename '_growthCurve.fig'])
+
+% maxGR = nan(5, 2);
+% maxTime = nan(5, 2);
+% 
+% [maxGR(:, 1), idx] = max(eOD_smooth([1, 4, 7, 10, 13], :)*3600, [], 2);
+% maxTime(:, 1) = time2(idx') * 60;
+% [maxGR(:, 2), idx] = max(eOD_smooth([2, 5, 8, 11, 14], :)*3600, [], 2);
+% maxTime(:, 2) = time2(idx') * 60;
+% figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
+% subplot(1, 2, 1)
+% for i=1:length(condlab)
+%     plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{i}), hold on
+% end
+% title('Growth Rate')
+% xlabel('Time (h)')
+% ylabel('Growth Rate (h^{-1})')
+% %xline(time2(16), '--k')
+% legend(condlab)
+% fig2pretty
+% % pause
+% % saveas(gcf, 'figure29.png')
+% % saveas(gcf, 'figure29.fig')
+% 
+% %figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
+% subplot(1, 2, 2)
+% for i=1:length(condlab)
+%     plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{i}), hold on
+% end
+% title('Growth Curve')
+% xlabel('Time (h)')
+% ylabel('OD(AU)')
+% legend(condlab)
+% %xline(time2(16), '--k')
+% fig2pretty
+
+%% for the thesis update
+idx = [1,5];
+figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 40), hold on
 subplot(1, 2, 1)
-for i=1:length(condlab)
+for i=idx
     plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{i}), hold on
 end
 title('Growth Rate')
 xlabel('Time (h)')
 ylabel('Growth Rate (h^{-1})')
-legend(condlab)
-fig2pretty
+%xline(time2(16), '--k')
+legend({'LB', 'Spent Media'})
+%fig2pretty
+% pause
+% saveas(gcf, 'figure29.png')
+% saveas(gcf, 'figure29.fig')
 
+%figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
 subplot(1, 2, 2)
-for i=1:length(condlab)
+for i=idx
     plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{i}), hold on
 end
 title('Growth Curve')
 xlabel('Time (h)')
 ylabel('OD(AU)')
-legend(condlab)
-fig2pretty
-
-%% next
-cd(fullpath)
-
-ER300 = [2, 5, 8, 11, 14];
-labels = {'LB', 'glucose', 'sorbitol', 'sucrose', 'glycerol'};
-
-load('04062022_growthCurve.mat')
-
-cd(dirsave)
-
-v = 1;
-figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 1)
-for i=ER300
-    plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Rate')
-xlabel('Time (h)')
-ylabel('Growth Rate (h^{-1})')
+legend({'LB', 'Spent Media'})
 %xline(time2(16), '--k')
-legend(labels)
-fig2pretty
-% pause
-% saveas(gcf, 'figure27.png')
-% saveas(gcf, 'figure27.fig')
+%fig2pretty
 
-v = 1;
-%figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 2)
-for i=ER300
-    plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Curve')
-xlabel('Time (h)')
-ylabel('OD(AU)')
-legend(labels)
-%xline(time2(16), '--k')
-fig2pretty
-pause
-% saveas(gcf, 'figure26.png')
-% saveas(gcf, 'figure26.fig')
+% savename = filename(1:length(filename)-5);
+% save(savename)
 
-cd(fullpath)
-load('04072022_growthCurve_01.mat')
+% 
+% figure
+% %ciplot((OD_norm_smooth-std_OD),(OD_norm_smooth+std_OD),time3,[0.75 0.75 1])
+% xlabel('Time (h)')
+% ylabel('OD(AU)')
+% fig2pretty
+% hold on
+% plot(time3,OD_norm_smooth,'LineWidth',2)
+% title('Growth Curve')
+% xlabel('Time (h)')
+% ylabel('OD(AU)')
+% legend(condlab)
 
-cd(dirsave)
+%% Prediction
+% [~, idx] = max(OD_norm_smooth(1,:));
+% y=OD_norm_smooth(1, 1:idx);
+% x=time3(1, 1:idx);
+% f=fit(x',y','exp1')
+% 
+% figure(1)
+% plot(f, x,y)
+% 
+% [~, idx] = max(OD_norm_smooth(2,:));
+% y=OD_norm_smooth(2, 1:idx);
+% x=time3(1, 1:idx);
+% f=fit(x',y','exp1')
+% 
+% figure(2)
+% plot(f, x,y)
+%% Function
 
-v = 1;
-figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 1)
-for i=ER300
-    plot(time2,eOD_smooth(i, :)*3600, 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Rate')
-xlabel('Time (h)')
-ylabel('Growth Rate (h^{-1})')
-%xline(time2(16), '--k')
-legend(labels)
-fig2pretty
-% pause
-% saveas(gcf, 'figure29.png')
-% saveas(gcf, 'figure29.fig')
+% function [dilution_factor]=dilPredict(current_OD, incubation_time, OD_curve, time)
+% % 
+% [~, idx] = max(OD_curve);
+% y=OD_curve(1, 1:idx);
+% x=time(1, 1:idx);
+% f=fit(x',y','exp1');
 
-v = 1;
-%figure('Units', 'normalized', 'outerposition', [0 0 1 1], 'DefaultAxesFontSize', 15), hold on
-subplot(1, 2, 2)
-for i=ER300
-    plot(time3,OD_norm_smooth(i, :), 'Color', okabeIto{v}), hold on
-    v = v + 1;
-end
-title('Growth Curve')
-xlabel('Time (h)')
-ylabel('OD(AU)')
-legend(labels)
-%xline(time2(16), '--k')
-fig2pretty
-pause
-% saveas(gcf, 'figure27.png')
-% saveas(gcf, 'figure27.fig')
+
+% end

@@ -53,3 +53,40 @@ plot(time,p)
 xlabel('Time (min)')
 ylabel('macromolecule concentration (nM)')
 legend('mRNA', 'protein')
+
+%% Part II, 07/14/2021
+%Step 1. Define input parameters
+b=10;
+n=1;
+
+%Step 2. Set initial conditions.
+Ct1=40000;
+Cu1=40000;
+
+%Step 3. Set time increment, time steps, and time vector
+dt=1; %time increment (1 second in minutes)
+N=60*250; %time increments in 20 minutes
+time=[0:N-1]*dt;
+
+%Step 4. Pre-allocate vectors
+Ct=zeros(1, N);
+Cu=zeros(1, N);
+Ct(1)=Ct1;
+Cu(1)=Cu1;
+
+%Step 5. Integrate
+%dCu/dt = n(Ct-Cu) - b(Cu)
+for i=1:N-1
+    f=n*(Ct(i)-Cu(i))-b*Cu(i);
+    dC=f*dt;
+    Cu(i+1)=Cu(i)+dC;
+end
+
+%Step 6. Plot
+figure
+plot(time, Cu)
+hold on
+plot(time,Ct)
+xlabel('Time (s)')
+ylabel('Fluor. Concentration')
+legend('unbleached', 'total')

@@ -22,10 +22,8 @@ clear, close all
 %INPUT 
 basename='06162020_yhdL_nutrientShift_colony1';
 folder=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename];
-dirname=['/Users
-    
+dirname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_2_a'];
 
-/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_2_a'];
 thresh=0.9;%Parameter used to threshold image, to estimate this, use checkhist.
 dr=6;%Radius to dilate posts by
 

@@ -54,22 +54,22 @@ if crunch==1
     %for this analysis, we'll have to average the plasmolysis events for
     %diff colonies of the same experiment
     
-    %pis=[mean(data(1:3, 9)), mean(data(4:6, 9)), mean(data(7:9, 9)), mean(data(10:12, 9)), mean(data(13:15, 9))];
-    %pil=[mean(data(1:3, 10)), mean(data(4:6, 10)), mean(data(7:9, 10)), mean(data(10:12, 10))];
-    pit=[mean(data(1:3, 11)), mean(data(4:6, 11)), mean(data(7:9, 11)), mean(data(10:12, 11)), mean(data(13:15, 11))];
-    %pfs=[mean(data(1:3, 12)), mean(data(4:6, 12)), mean(data(7:9, 12)), mean(data(10:12, 12)), mean(data(13:15, 12))];
-    %pfl=[mean(data(1:3, 13)), mean(data(4:6, 13)), mean(data(7:9, 13)), mean(data(10:12, 13))];
-    pft=[mean(data(1:3, 14)), mean(data(4:6, 14)), mean(data(7:9, 14)), mean(data(10:12, 14)),  mean(data(13:15, 14))];
+    %pis=[mean(data(1:3, 9)), mean(data(4:6, 9)), mean(data(7:8, 9)), mean(data(10:12, 9)), mean(data(13:15, 9))];
+    %pil=[mean(data(1:3, 10)), mean(data(4:6, 10)), mean(data(7:8, 10)), mean(data(10:12, 10))];
+    pit=[mean(data(1:3, 11)), mean(data(4:6, 11)), mean(data(7:8, 11)), mean(data(10:12, 11)), mean(data(13:15, 11))];
+    %pfs=[mean(data(1:3, 12)), mean(data(4:6, 12)), mean(data(7:8, 12)), mean(data(10:12, 12)), mean(data(13:15, 12))];
+    %pfl=[mean(data(1:3, 13)), mean(data(4:6, 13)), mean(data(7:8, 13)), mean(data(10:12, 13))];
+    pft=[mean(data(1:3, 14)), mean(data(4:6, 14)), mean(data(7:8, 14)), mean(data(10:12, 14)),  mean(data(13:15, 14))];
     
     %calculate stadard deviation
-    sdpit=[std(data(1:3, 11)), std(data(4:6, 11)), std(data(7:9, 11)), std(data(10:12, 11)), std(data(13:15, 11))];
-    sdpft=[std(data(1:3, 14)), std(data(4:6, 14)), std(data(7:9, 14)), std(data(10:12, 14)),  std(data(13:15, 14))];
+    sdpit=[std(data(1:3, 11)), std(data(4:6, 11)), std(data(7:8, 11)), std(data(10:12, 11)), std(data(13:15, 11))];
+    sdpft=[std(data(1:3, 14)), std(data(4:6, 14)), std(data(7:8, 14)), std(data(10:12, 14)),  std(data(13:15, 14))];
     
-    ltotal=[mean(x.ltotal(1:3)), mean(x.ltotal(4:6)), mean(x.ltotal(7:9)), mean(y.ltotal(1:3)), mean(z.ltotal(1:3))];
+    ltotal=[mean(x.ltotal(1:3)), mean(x.ltotal(4:6)), mean(x.ltotal(7:8)), mean(y.ltotal(1:3)), mean(z.ltotal(1:3))];
     
     %calculate stadard deviation
-    sdpit=[std(data(1:3, 11)), std(data(4:6, 11)), std(data(7:9, 11)), std(data(10:12, 11)), std(data(13:15, 11))]./ltotal;
-    sdpft=[std(data(1:3, 14)), std(data(4:6, 14)), std(data(7:9, 14)), std(data(10:12, 14)),  std(data(13:15, 14))]./ltotal;
+    sdpit=[std(data(1:3, 11)), std(data(4:6, 11)), std(data(7:8, 11)), std(data(10:12, 11)), std(data(13:15, 11))]./ltotal;
+    sdpft=[std(data(1:3, 14)), std(data(4:6, 14)), std(data(7:8, 14)), std(data(10:12, 14)),  std(data(13:15, 14))]./ltotal;
     
     %calculate plasmolysis events/micron immediately after shock
     %pism=pis./ltotal;

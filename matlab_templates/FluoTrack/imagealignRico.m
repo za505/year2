@@ -26,10 +26,10 @@ close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='06162020_dSigM_nutrientShift_colony7';
-dirname={['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_phase'];
-      ['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_fluor']};
-regname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_crop']; 
+basename='03142021_Exp3_colony1';
+dirname={['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03142021_analysis/03142021_Exp3/' basename '/' basename '_phase/' basename '_full'];
+      ['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03142021_analysis/03142021_Exp3/' basename '/' basename '_647/' basename '_full']; ['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03142021_analysis/03142021_Exp3/' basename '/' basename '_488/' basename '_full']};
+regname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03142021_analysis/03142021_Exp3/' basename '/' basename '_phase/' basename '_crop']; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 workdir=pwd;
@@ -52,8 +52,8 @@ for i=1:ld
     directory2=dir('*.tif');
     cd('../')
     
-    mkdir([basename '_' num2str(i) '_a'])
-    cd(['./' basename '_' num2str(i) '_a'])
+    mkdir([basename '_aligned'])
+    cd(['./' basename '_aligned'])
     
     shft=zeros(T,2);
     

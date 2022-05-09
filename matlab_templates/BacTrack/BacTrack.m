@@ -64,14 +64,14 @@ close all
 tic
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input
-basename='03252021_Exp2_colony4';%Name of the image stack, used to save file.
-dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03252021_analysis/03252021_Exp2/' basename '/' basename '_phase/' basename '_erased'];%Directory that the image stack is saved in.
-savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03252021_analysis/03252021_Exp2/' basename '/' basename '_phase/' basename '_figures'];%Directory to save the output .mat file to.
+basename='04012021_Exp1_colony4';%Name of the image stack, used to save file.
+dirname=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/04012021_analysis/04012021_Exp1/' basename '/' basename '_phase/' basename '_erased'];%Directory that the image stack is saved in.
+savedir=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/04012021_analysis/04012021_Exp1/' basename '/' basename '_phase/' basename '_figures'];%Directory to save the output .mat file to.
 %metaname=['/Users/Rico/Documents/MATLAB/Matlab Ready/' basename '/metadata.txt'];%Name of metadata file.  Will only work if images were taken with micromanager.
 lscale=0.08;%%Microns per pixel.
 tscale=10;%Frame rate.
 thresh=0;%For default, enter zero.
-IntThresh=12079;%Threshold used to enhance contrast. Default:35000
+IntThresh=10280;%Threshold used to enhance contrast. Default:35000
 dr=1;%Radius of dilation before watershed %default: 1
 sm=2;%Parameter used in edge detection %default: 2
 minL=2;%Minimum cell length default: 2
@@ -275,7 +275,7 @@ for t=1:T
     tstamp=[tstamp;ones(nc(t),1)*t];
     cellnum=[cellnum;(1:nc(t))'];
 
-if vis==1
+if vis==1 & t >= T-10 | t <= 6
    figure
    imshow(im)
    hold on
@@ -533,20 +533,19 @@ clf
 hold on
 for i=1:ncells  
     lcell(i,:)=movingaverage2(lcell(i,:),3);
-    %indx=isnan(lcell(i,:))~=1;
-    %indx=find(indx);
-    %plot(time(indx),lcell(i,indx))
-    plot(time(1:end),lcell(i,1:end)) 
+    indx=isnan(lcell(i,:))~=1;
+    indx=find(indx);
+    plot(time(indx),lcell(i,indx))
+    %plot(time(1:end),lcell(i,1:end)) 
 end
 xlabel('Time (s)')
 ylabel('Length (\mum)')
-xline(200, '--k', 'PBS + 647') %frame 20-32
-xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
-xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
-xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
+xline(80, '--k', 'PBS + 5% detergent') %frame 8
+xline(300, '--k', 'PBS + FSS') %frame 30-42
+xline(430, '--k', 'PBS + FSS + 10 mM Mg') %frame 43-70
 fig2pretty
 saveas(gcf,[basename,'_lTraces.png'])
-
+ 
 figure(2), title('Cell Width vs. Time')
 hold on
 for i=1:ncells
@@ -556,10 +555,9 @@ plot(time,wav,'-r','LineWidth',2)
 xlabel('Time (s)')
 ylabel('Width (/mum)')
 fig2pretty
-xline(200, '--k', 'PBS + 647') %frame 20-32
-xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
-xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
-xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
+xline(80, '--k', 'PBS + 5% detergent') %frame 8
+xline(300, '--k', 'PBS + FSS') %frame 30-42
+xline(430, '--k', 'PBS + FSS + 10 mM Mg') %frame 43-70
 saveas(gcf, [basename,'_wTraces.png'])
 
 % figure(4), title('Circumferential Strain vs. Time')
@@ -571,6 +569,7 @@ saveas(gcf, [basename,'_wTraces.png'])
 % xlabel('t (s)')
 % ylabel('\epsilon_w')
 % fig2pretty
+% saveas(gcf, [basename,'_cStrain.png'])
 
 tmid=(time(2:end)+time(1:end-1))/2;
 
@@ -582,13 +581,12 @@ end
 plot(tmid,vav,'-r')
 xlabel('Time (s)')
 ylabel('Elongation Rate (s^{-1})')
-xline(200, '--k', 'PBS + 647') %frame 20-32
-xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
-xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
-xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
+xline(80, '--k', 'PBS + 5% detergent') %frame 8
+xline(300, '--k', 'PBS + FSS') %frame 30-42
+xline(430, '--k', 'PBS + FSS + 10 mM Mg') %frame 43-70
 fig2pretty
 saveas(gcf, [basename,'_eTraces.png'])
-
+% 
 figure(6), title('Elongation Rate vs. Time')
 hold on
 ciplot((vav-vstd)*3600,(vav+vstd)*3600,tmid,[0.75 0.75 1])
@@ -596,10 +594,9 @@ plot(tmid,vav*3600,'-r')
 xlabel('Time (s)')
 ylabel('Elongation (hr^{-1})')
 yline(2, '--b')
-xline(200, '--k', 'PBS + 647') %frame 20-32
-xline(330, '--k', 'PBS + 647 + 12 mM Mg') %frame 33-45
-xline(460, '--k', 'PBS + 647 + 15 mM Mg') %frame 46-58
-xline(590, '--k', 'PBS + 647 + 20 mM Mg') %frame 59-66
+xline(80, '--k', 'PBS + 5% detergent') %frame 8
+xline(300, '--k', 'PBS + FSS') %frame 30-42
+xline(430, '--k', 'PBS + FSS + 10 mM Mg') %frame 43-70
 fig2pretty
 saveas(gcf, [basename,'_ET.png'])
 save([basename '_BTphase'])

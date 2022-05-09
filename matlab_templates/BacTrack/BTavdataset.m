@@ -14,14 +14,18 @@ close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%User Input 
-basename='03172021_Exp2_colony1';
-filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis/' basename];
-
+basename=["03172021_Exp3_colony1","03172021_Exp3_colony2","03172021_Exp3_colony3"];
+filename=['/Users/zarina/Downloads/NYU/Year2_2021_Spring/03172021_analysis'];
+savename=['03172021_Exp3'];
 sfac=1;
+B=length(basename); %number of main directories to analyze
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-cd([filename '/' basename '_phase/' basename '_figures/'])
-filelist = dir('*_BTphase.mat');
+for b=1:B
+    base=char(basename(b))
+    cd([filename '/' base '/' base '_phase/' base '_figures/'])
+    filelist(b) = dir('*_BTphase.mat');
+end
 
 %filelist=filelist(end);
 lfl=length(filelist);
@@ -30,7 +34,7 @@ cmap=jet;
 lcmap=floor(64/lfl);
 
 %load([filelist{1} '_BTconn'],'T')
-load([filelist(1).name],'T')
+load([filelist(B).name],'T')
 vt=[];
 lcellt=[];
 wcellt=[];
@@ -39,6 +43,8 @@ ltotalt=zeros(1,T);
 
 for ii=1:lfl
     ii
+    base=char(basename(ii))
+    cd([filename '/' base '/' base '_phase/' base '_figures/'])
     %load([filelist{ii} '_BTconn'],'v','tmid','T','atotal','ltotal','vav')
     load([filelist(ii).name],'v','tmid','T','vav','B','im','lcell','wcell','time','lscale','tscale')
     tscale
@@ -92,17 +98,19 @@ Lsmooth=(Leff-movingaverage(Leff,12))./movingaverage(Leff,12);
 % fig2pretty
 % [X,Y]=ginput;
 
+cd(filename);
+
 figure, title('Effective Length vs. Time')
 plot(tmid,Leff)
 xlabel('t (s)')
 ylabel('l_{eff} (\mum)')
 fig2pretty
-xline(60, '--k', '*PBS + 5% detergent')
-xline(132, '--k', '*PBS + 647')
-xline(198, '--k', '*PBS + 647 + FSS')
-xline(318, '--k', '*PBS + 647 + CF')
-xline(438, '--k', '*PBS + 647 + AF')
-saveas(gcf, [basename,'_effLength.png'])
+xline(0, '--k', 'LB + 647') %frame 1-16
+xline(170, '--k', '*PBS + 5% detergent') %frame 17-28
+xline(290, '--k', '*PBS + 647') %frame 29-41
+xline(420, '--k', '*PBS + 647 + 20 mM NaCl') %frame 42+
+ylim([1.5 3.5])
+saveas(gcf, [savename,'_effLength.png'])
 
 % [mvt,~]=size(vt);
 % figure, title('Strain Rate vs. Time')
@@ -172,12 +180,12 @@ end
 xlabel('t (s)')
 ylabel('Cell Wall Length (\mum)')
 fig2pretty
-xline(60, '--k', '*PBS + 5% detergent')
-xline(132, '--k', '*PBS + 647')
-xline(198, '--k', '*PBS + 647 + FSS')
-xline(318, '--k', '*PBS + 647 + CF')
-xline(438, '--k', '*PBS + 647 + AF')
-saveas(gcf, [basename,'_lengthTrace.png'])
+xline(0, '--k', 'LB + 647') %frame 1-16
+xline(170, '--k', '*PBS + 5% detergent') %frame 17-28
+xline(290, '--k', '*PBS + 647') %frame 29-41
+xline(420, '--k', '*PBS + 647 + 20 mM NaCl') %frame 42+
+saveas(gcf, [savename,'_lengthTrace.png'])
+save([savename '_BTads'])
 
 % figure
 % plot(time,ltotalt)

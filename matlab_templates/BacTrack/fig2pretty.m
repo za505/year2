@@ -63,9 +63,9 @@ for mygcanum = 1:numel(allAxes)
         'Box'         , 'off'     , ...
         'TickDir'     , 'out'     , ...
         'TickLength'  , [.02 .02] , ...
-        'LineWidth'   , 1         , ...
+        'LineWidth'   , 2         , ...
         'FontName'    , 'Helvetica' ,...
-        'FontSize'    , 16);
+        'FontSize'    , 30);
     
     % Update titles and labels, if any
     curtitle = get(get(allAxes(mygcanum),'Title'),'String');
@@ -74,23 +74,23 @@ for mygcanum = 1:numel(allAxes)
     if ~strcmp(curtitle,'')
         set(get(allAxes(mygcanum),'Title'), ...
             'FontName','Helvetica', ...
-            'FontSize',16);
+            'FontSize', 30);
     end
     if ~strcmp(curxlabel,'')
         set(get(allAxes(mygcanum),'Xlabel'), ...
             'FontName','Helvetica', ...
-            'FontSize',16);
+            'FontSize', 30);
     end
     if ~strcmp(curylabel,'')
         set(get(allAxes(mygcanum),'Ylabel'), ...
             'FontName','Helvetica', ...
-            'FontSize',16);
+            'FontSize', 30);
     end
     
     % Go through all line objects and make them a little thicker
     allplots = findall(allAxes(mygcanum),'type','line');
     for plotnum = 1:numel(allplots)
-        set(allplots(plotnum),'LineWidth',1);
+        set(allplots(plotnum),'LineWidth', 2);
     end
     
 end

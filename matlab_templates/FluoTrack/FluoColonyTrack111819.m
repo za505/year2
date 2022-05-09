@@ -19,9 +19,9 @@ clear, close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %INPUT 
-basename='06162020_yhdL_nutrientShift_colony1';
-folder=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename];
-dirname=['/Users/zarina/Downloads/NYU/Lab_2020_Summer/06162020_nutrientShiftAssay/' basename '/' basename '_2_b'];
+basename='04262022_Exp1';
+folder=['/Users/zarina/Downloads/NYU/Year3_2022_Spring/04262022_analysis/' basename '/' basename '_phase/' basename '_figures/'];
+dirname=['/Users/zarina/Downloads/NYU/Year3_2022_Spring/04262022_analysis/' basename '/' basename '_phase/' basename '_aligned/'];
 thresh=0.7;%Parameter used to threshold image, to estimate this, use checkhist.
 dr=6;%Radius to dilate posts by
 
@@ -33,7 +33,7 @@ smooth=20;%Number of frames over which to smooth growth rate profiles
 vis=1;%Visualize tracking
 checkhist=0;%Look at image histogram
 checkposts=0;%Check microfluidic posts
-recrunch=1;%Load previously crunched data
+recrunch=0;%Load previously crunched data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if recrunch==1
@@ -183,7 +183,7 @@ for t=1:T
     colonies_dil=imdilate(bw,strel('disk',1));
     col_edges=colonies_dil-bw;
     
-    if vis==1 %& t < 40
+    if vis==1 & (t >= T-5 | t <= 10)
         figure
         imshow(imoverlay(im,col_edges,[1 0 0]))
         pause
@@ -209,6 +209,8 @@ tmid=(time(1:end-1)+time(2:end))/2;
 end
 
 %Plot data
+cd(folder)
+
 figure
 plot(time,Ncells/(Ncells(1)))
 xlabel('Time (h)')
