@@ -11,24 +11,24 @@ okabeIto = [okabeIto, okabeIto];
 
 cd(dirsave)
 
-strains = {'ER475'};
-conditions = {'LB', '1-hour', '2-hour', '4-hour', '8-hour', '16-hour'};
+basename = ['04052022'];
+strains = {'ER005'};
+conditions = {'LB', 'RDM + glucose', 'RDM + sucrose', 'RDM + sorbitol', 'RDM + glycerol'};
 
-filename = ['07252022_growthCurve.xlsx'];
+filename = [basename '_growthCurve.xlsx'];
 
-xlRange='B51:EK122';
-nwells=72;
-T=140;
+xlRange='B60:CV119';
+nwells=60;
+T=99;
 contamination = [];
 
 OD = xlsread(filename,xlRange);
 
-WellInd = {[7:12], [1:6];
-    [19:24], [13:18];
-    [31:36], [25:30];
-    [43:48], [37:42];
-    [55:60], [49:54];
-    [67:72], [61:66]};
+WellInd = {[10:12], [1:3];
+    [22:24], [13:15];
+    [34:36], [25:27];
+    [46:48], [37:39];
+    [58:60], [49:51]};
 
 [Ncond ~]=size(WellInd); % # rows = # conditions
 wellODi=cell(Ncond,1);
@@ -89,5 +89,6 @@ end
 title('Growth Curve')
 xlabel('Time (h)')
 ylabel('OD (AU)')
-saveas(gcf, '07252022_growthCurve.fig')
-saveas(gcf, '07252022_growthCurve.mat')
+saveas(gcf, [basename '_growthCurve_ER005.fig'])
+saveas(gcf, [basename '_growthCurve_ER005.png'])
+save([basename '_growthCurve_ER005.mat'])
